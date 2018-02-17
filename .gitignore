@@ -4,6 +4,9 @@ node_modules/
 # built bundle
 client/bundle.js
 client/*.tmp-browserify*
+client/loaders.min.css
 
 # flow coverage reports
 flow-coverage/
+
+flow-typed/

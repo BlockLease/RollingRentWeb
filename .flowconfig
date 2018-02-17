@@ -10,4 +10,5 @@
 
 module.name_mapper='^src' -> '<PROJECT_ROOT>/src'
 module.name_mapper='^components' -> '<PROJECT_ROOT>/src/components'
+module.name_mapper='^utils' -> '<PROJECT_ROOT>/src/utils'
 module.system.node.resolve_dirname=node_modules

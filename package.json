@@ -4,15 +4,20 @@
   "description": "A basic react build system",
   "private": true,
   "scripts": {
-    "build": "npm run clean && browserify ./src -t babelify --outfile client/bundle.js",
+    "clean": "rm ./client/bundle.js* 2> /dev/null || true",
+    "prebuild:loaders": "cp ./node_modules/loaders.css/loaders.min.css ./client/",
+    "prebuild": "npm run prebuild:loaders && npm run clean",
+    "build": "npm run prebuild && browserify ./src -t babelify --outfile client/bundle.js",
     "start": "npm run build && http-server ./client",
-    "clean": "rm ./client/bundle.js || echo 'No bundle found'",
     "watch": "nodemon -w ./src --exec 'npm run start'",
-    "coverage": "flow-coverage-report -t html -i './src/**.js' -i './src/*/**.js' --threshold 80"
+    "coverage": "flow-coverage-report -t html -i './src/**.js' -i './src/*/**.js' --threshold 80",
+    "postinstall": "flow-typed install react-redux@5 moment@2"
   },
   "author": "Chance Hudson",
   "license": "MIT",
   "dependencies": {
+    "loaders.css": "^0.1.2",
+    "moment": "^2.20.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-scripts": "1.1.0",
@@ -33,6 +38,7 @@
     "eslint-plugin-prettier": "^2.6.0",
     "flow-bin": "^0.64.0",
     "flow-coverage-report": "^0.4.1",
+    "flow-typed": "^2.3.0",
     "http-server": "^0.11.1",
     "nodemon": "^1.14.12",
     "prettier": "^1.10.2"

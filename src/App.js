@@ -5,11 +5,13 @@
 import React, { Component } from 'react';
 import Web3 from 'web3';
 import ContractStats from 'components/ContractStats';
+import RippleLoader from 'components/RippleLoader';
+import Promisify from 'utils/Promisify';
 
 // Injected web3
 declare var web3: Web3;
 
-const contractAddress = '0x1EDa2717A936b7bB70c6D6cA39002Bcfe3529cb2';
+const contractAddress = '0xad30db44bb3fbc5157425c7f137ce6b1730e6e11';
 const contractAbiString = '[{"constant":false,"inputs":[],"name":"collectRent","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"contractEnabled","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"bailout","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"rentPeriod","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"assertContractEnabled","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"contractBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"tenant","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"rentWeiValue","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"rentStartTime","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"usdOracle","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"landlordBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"landlord","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"rentPrice","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_usdOracle","type":"address"},{"name":"_landlord","type":"address"},{"name":"_tenant","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}]';
 const contractAbi = JSON.parse(contractAbiString);
 
@@ -18,11 +20,20 @@ const oracleAbiString = '[{"constant":false,"inputs":[{"name":"_myid","type":"by
 const oracleAbi = JSON.parse(oracleAbiString);
 
 type Props = { };
+
 type State = {
   rollingRent: Web3.Contract,
   usdOracle: Web3.Contract,
   web3: Web3,
-  activeAccount: string
+  activeAccount: string,
+  contractActive?: boolean,
+  contractWei?: string,
+  landlordWei?: string,
+  usdPrice?: number,
+  usdNeedsUpdate?: boolean,
+  rentWei?: string,
+  rentPrice?: number,
+  loadingScreenVisible: boolean
 };
 
 export default class App extends Component<Props, State> {
@@ -41,27 +52,57 @@ export default class App extends Component<Props, State> {
       rollingRent,
       usdOracle,
       web3: _web3,
-      activeAccount: ''
+      activeAccount: '',
+      loadingScreenVisible: true
     };
+    setTimeout(() => {
+      this.setState({
+        loadingScreenVisible: false
+      });
+    }, 2000);
+  }
+
+  componentDidMount() {
+    Promise.all([
+      Promisify(this.state.rollingRent.methods.contractEnabled(), 'call'),
+      Promisify(this.state.rollingRent.methods.landlordBalance(), 'call'),
+      Promisify(this.state.usdOracle.methods.getPrice(), 'call'),
+      Promisify(this.state.rollingRent.methods.contractBalance(), 'call'),
+      Promisify(this.state.rollingRent.methods.rentPrice(), 'call')
+    ])
+      .then((results: any[]) => {
+        this.setState({
+          contractActive: results[0],
+          landlordWei: results[1],
+          usdPrice: results[2],
+          contractWei: results[3],
+          rentPrice: results[4]
+        });
+      })
+      .catch(err => console.log(err));
   }
 
   render() {
     return (
       <div style={styles.app}>
-        <ContractStats
-          rollingRent={this.state.rollingRent}
-          usdOracle={this.state.usdOracle}
-          web3={this.state.web3}
-          activeAccount={this.state.activeAccount}
-        />
-        <br />
-        <button
-          onClick={() => {
-            console.log('button pressed');
-          }}
-        >
-          Withdraw funds
-        </button>
+        {(() => {
+          if (this.state.loadingScreenVisible) return <RippleLoader />;
+          else return (
+            <ContractStats
+              contractActive={this.state.contractActive || false}
+              contractWei={this.state.contractWei || '0'}
+              landlordWei={this.state.landlordWei || '0'}
+              usdPrice={this.state.usdPrice || 0}
+              usdNeedsUpdate={this.state.usdNeedsUpdate || true}
+              rentWei={this.state.rentWei || '0'}
+              rentPrice={this.state.rentPrice || 0}
+              rollingRent={this.state.rollingRent}
+              usdOracle={this.state.usdOracle}
+              web3={this.state.web3}
+              activeAccount={this.state.activeAccount}
+            />
+          );
+        })()}
       </div>
     );
   }
@@ -69,10 +110,12 @@ export default class App extends Component<Props, State> {
 
 const styles = {
   app: {
-    margin: 0,
+    margin: 'auto',
     padding: 0,
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    textAlign: 'center',
+    alignContent: 'center'
   },
   topButton: {
     // backgroundColor: 'blue',

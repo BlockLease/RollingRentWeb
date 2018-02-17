@@ -4,52 +4,32 @@
 
 import React, { Component } from 'react';
 import Web3 from 'web3';
-
-declare var web3: Web3;
+import moment from 'moment';
 
 type Props = {
+  contractActive: boolean,
+  contractWei: string,
+  landlordWei: string,
+  usdPrice: number,
+  usdNeedsUpdate: boolean,
+  rentWei: string,
+  rentPrice: number,
   rollingRent: Web3.Contract,
   usdOracle: Web3.Contract,
   web3: Web3,
   activeAccount: string
 };
-type State = {
-  contractActive: boolean,
-  contractWei: string,
-  landlordWei: string,
-  usdPrice: number,
-  rentWei: string,
-  rentPrice: number
-};
+
+type State = {};
 
 export default class ContractStats extends Component<Props, State> {
 
   state: State;
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      contractActive: false,
-      contractWei: '',
-      landlordWei: '',
-      usdPrice: 0,
-      rentWei: '',
-      rentPrice: 0
-    };
-  }
-
-  componentDidMount() {
-    this.props.rollingRent.methods.rentWeiValue().call((err, rentWei) => this.setState({rentWei}));
-    this.props.usdOracle.methods.getPrice().call((err, usdPrice) => this.setState({usdPrice}));
-    this.props.rollingRent.methods.landlordBalance().call((err, landlordWei) => this.setState({landlordWei}));
-    this.props.rollingRent.methods.contractBalance().call((err, contractWei) => this.setState({contractWei}));
-    this.props.rollingRent.methods.rentPrice().call((err, rentPrice) => this.setState({rentPrice}));
-  }
-
   render() {
     return (
       <div style={styles.container}>
-        <p>Current USD/ETH price: ${this.state.usdPrice/100}</p>
+        <p>Current USD/ETH price: ${this.props.usdPrice/100}</p>
         <button
           onClick={() => {
             this.props.web3.eth.sendTransaction({
@@ -59,16 +39,23 @@ export default class ContractStats extends Component<Props, State> {
               gas: 300000
             }, (err, res) => {
               console.log(err, res);
-            }).on('receipt', (obj) => console.log(obj));
+            });
           }}
         >
           Update
         </button>
 
-        <p>Rent price: ${this.state.rentPrice/100} ({this.state.rentPrice / this.state.usdPrice} eth)</p>
-        <p>Current contract balance: {this.props.web3.utils.fromWei(this.state.contractWei)}</p>
-        <p>Current landlord balance: {this.props.web3.utils.fromWei(this.state.landlordWei)}</p>
+        <p>Rent price: ${this.props.rentPrice/100} ({this.props.rentPrice / this.props.usdPrice} eth)</p>
+        <p>Current contract balance: {this.props.web3.utils.fromWei(this.props.contractWei)}</p>
+        <p>Current landlord balance: {this.props.web3.utils.fromWei(this.props.landlordWei)}</p>
         <br />
+        <button
+          onClick={() => {
+            console.log('button pressed');
+          }}
+        >
+          Withdraw funds
+        </button>
       </div>
     );
   }
