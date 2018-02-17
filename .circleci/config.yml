@@ -1,0 +1,15 @@
+flow_coverage: &FlowCoverage |
+  npm install
+  npm run coverage
+
+version: 2
+jobs:
+  build:
+    machine:
+      node:
+        version: 8.9.4
+    steps:
+      - checkout
+      - run: *FlowCoverage
+      - store_artifacts:
+          path: ./flow-coverage

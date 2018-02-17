@@ -1,0 +1,38 @@
+{
+  "name": "react-base",
+  "version": "0.0.1",
+  "description": "A basic react build system",
+  "private": true,
+  "scripts": {
+    "build": "browserify ./src -t babelify --outfile client/bundle.js",
+    "start": "npm run build && http-server ./client",
+    "watch": "nodemon -w ./src --exec 'npm run start'",
+    "coverage": "flow-coverage-report -t html -i './src/**.js' -i './src/*/**.js' --threshold 80"
+  },
+  "author": "Chance Hudson",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "1.1.0",
+    "web3": "^1.0.0-beta.30"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.1",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babelify": "^8.0.0",
+    "browserify": "^15.2.0",
+    "eslint": "^4.17.0",
+    "eslint-plugin-flowtype": "^2.42.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "flow-bin": "^0.64.0",
+    "flow-coverage-report": "^0.4.1",
+    "http-server": "^0.11.1",
+    "nodemon": "^1.14.12",
+    "prettier": "^1.10.2"
+  }
+}
