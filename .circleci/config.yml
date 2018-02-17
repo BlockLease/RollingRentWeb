@@ -14,15 +14,15 @@ jobs:
     steps:
       - checkout
       - run: *Deploy
-  # flow_coverage:
-  #   machine:
-  #     node:
-  #       version: 8.9.4
-  #     steps:
-  #       - checkout
-  #       - run: *FlowCoverage
-  #       - store_artifacts:
-  #           path: ./flow-coverage
+  flow_coverage:
+    machine:
+      node:
+        version: 8.9.4
+    steps:
+      - checkout
+      - run: *FlowCoverage
+      - store_artifacts:
+          path: ./flow-coverage
 # workflows:
 #   version: 2
 #   build_all:
