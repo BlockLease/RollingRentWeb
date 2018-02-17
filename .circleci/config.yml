@@ -10,9 +10,7 @@ deploy: &Deploy |
 version: 2
 jobs:
   build:
-    machine:
-      node:
-        version: 8.9.4
+    machine: true
     steps:
       - checkout
       - run: *Deploy
