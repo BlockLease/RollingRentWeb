@@ -10,7 +10,7 @@
     "build": "npm run prebuild && browserify ./src -t babelify --outfile client/bundle.js",
     "start": "npm run build && http-server ./client",
     "watch": "nodemon -w ./src --exec 'npm run start'",
-    "coverage": "flow-coverage-report -t html -i './src/**.js' -i './src/*/**.js' --threshold 80",
+    "coverage": "flow-coverage-report -t html -i './src/**.js' -i './src/*/**.js' --threshold 50",
     "postinstall": "flow-typed install react-redux@5 moment@2"
   },
   "author": "Chance Hudson",
