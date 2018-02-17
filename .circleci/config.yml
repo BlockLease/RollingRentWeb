@@ -23,18 +23,18 @@ jobs:
         - run: *FlowCoverage
         - store_artifacts:
             path: ./flow-coverage
-workflows:
-  version: 2
-  build_all:
-    jobs:
-      - build:
-          context: org-global
-          filters:
-            branches:
-              only:
-                - master
-      - flow_coverage:
-          filters:
-            branches:
-              only:
-                - master
+# workflows:
+#   version: 2
+#   build_all:
+#     jobs:
+#       - build:
+#           context: org-global
+#           filters:
+#             branches:
+#               only:
+#                 - master
+#       - flow_coverage:
+#           filters:
+#             branches:
+#               only:
+#                 - master
