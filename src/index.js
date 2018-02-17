@@ -4,8 +4,8 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import DownloadMM from './components/DownloadMM';
+import App from 'src/App';
+import DownloadMM from 'components/DownloadMM';
 
 // Injected web3
 declare var web3: {};
