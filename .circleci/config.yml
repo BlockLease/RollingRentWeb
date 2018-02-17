@@ -1,7 +1,7 @@
 flow_coverage: &FlowCoverage |
   npm install
   npm run coverage
-deploy: &Deploy |
+master_build: &MasterBuild |
   docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
   echo 'export DOCKER_REPO=blocklease/web' >> $BASH_ENV
   docker build . -t $DOCKER_REPO:latest
@@ -10,12 +10,10 @@ deploy: &Deploy |
 version: 2
 jobs:
   build:
-    machine:
-      node:
-        version: 8.9.4
+    machine: true
     steps:
       - checkout
-      - run: *Deploy
+      - run: *MasterBuild
   flow_coverage:
     machine:
       node:
