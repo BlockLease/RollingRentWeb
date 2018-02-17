@@ -5,6 +5,8 @@ boot: &Boot |
   docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
   echo 'export DOCKER_REPO=blocklease/web' >> $BASH_ENV
 master_build: &MasterBuild |
+  npm install
+  npm run build
   docker build . -t $DOCKER_REPO:latest
   docker push $DOCKER_REPO:latest
 
