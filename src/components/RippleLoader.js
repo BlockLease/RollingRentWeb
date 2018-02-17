@@ -26,7 +26,8 @@ export default class RippleLoader extends Component<Props, State> {
 
 const styles = {
   container: {
-    padding: 40,
+    paddingLeft: '50%',
+    paddingTop: '50%',
     width: 80,
     height: 80
   },

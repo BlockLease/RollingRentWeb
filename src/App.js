@@ -86,7 +86,21 @@ export default class App extends Component<Props, State> {
     return (
       <div style={styles.app}>
         {(() => {
-          if (this.state.loadingScreenVisible) return <RippleLoader />;
+          if (this.state.loadingScreenVisible) return (
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              margin: 'auto',
+              width: 80,
+              height: 80,
+              // backgroundColor: 'red'
+            }}>
+              <RippleLoader />
+            </div>
+          );
           else return (
             <ContractStats
               contractActive={this.state.contractActive || false}
@@ -110,12 +124,9 @@ export default class App extends Component<Props, State> {
 
 const styles = {
   app: {
-    margin: 'auto',
     padding: 0,
     flex: 1,
-    backgroundColor: 'white',
-    textAlign: 'center',
-    alignContent: 'center'
+    backgroundColor: 'white'
   },
   topButton: {
     // backgroundColor: 'blue',
