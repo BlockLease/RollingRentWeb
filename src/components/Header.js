@@ -4,34 +4,46 @@
 
 import React, { Component } from 'react';
 import Web3 from 'web3';
+import UserStore from 'stores/User';
+import Dispatcher from 'src/Dispatcher';
+import Action from 'src/Action';
 
-type Props = {
-  web3: Web3,
-  networkId: number,
-  activeAccount: string
-};
-type State = { };
+type Props = {};
+type State = {};
 
 export default class Header extends Component<Props, State> {
+
+  dispatchToken: string;
+
+  componentDidMount() {
+    this.dispatchToken = Dispatcher.register((payload: Action<any>) => {
+      if (payload.type === Action.user.loaded) this.forceUpdate();
+    });
+  }
+
+  componentWillUnmount() {
+    Dispatcher.unregister(this.dispatchToken);
+  }
+
   render() {
     return (
       <div style={styles.container}>
         <div style={styles.headerItem}>
-          blocklease.io - Lease properties securely
+          blocklease
         </div>
         <div style={styles.headerItem}>
           <div>
             {(() => {
-              if (this.props.networkId === 1) {
+              if (UserStore.networkId === 1) {
                 return 'Mainnet';
-              } else if (this.props.networkId === 4) {
+              } else if (UserStore.networkId === 4) {
                 return 'Rinkeby';
               } else {
-                return 'Unkown Network';
+                return 'Unknown Network';
               }
             })()}
           </div>
-          <div>{this.props.activeAccount}</div>
+          <div>{UserStore.activeAccount}</div>
         </div>
       </div>
     );
