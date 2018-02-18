@@ -42,36 +42,36 @@ class LeaseStore extends Store {
       this.landlordAddress = payload.data.landlordAddress;
       this.tenantAddress = payload.data.tenantAddress;
     } else if (payload.type === Action.lease.update) {
-      console.assert(payload.data.leaseAddress, 'No lease address supplied to load');
-      console.assert(payload.data.leaseAbi, 'No lease ABI supplied to load');
-      console.assert(web3, 'No web3 found');
-      const _web3 = new Web3(web3.currentProvider);
-      const leaseContract = new _web3.eth.Contract(payload.data.leaseAbi, payload.data.leaseAddress);
-      Promise.all([
-        Promisify(leaseContract.methods.leaseStartTime(), 'call'),
-        Promisify(leaseContract.methods.leaseCycleTime(), 'call'),
-        Promisify(leaseContract.methods.contractBalance(), 'call'),
-        Promisify(leaseContract.methods.contractEnabled(), 'call'),
-        Promisify(leaseContract.methods.rentPrice(), 'call'),
-        Promisify(leaseContract.methods.usdOracle(), 'call'),
-        Promisify(leaseContract.methods.landlord(), 'call'),
-        Promisify(leaseContract.methods.tenant(), 'call')
-      ])
-        .then((results: any[]) => {
-          Dispatcher.dispatch({
-            type: Action.lease.loaded,
-            data: {
-              leaseStartTime: results[0],
-              leaseCycleTime: results[1],
-              contractBalanceWei: results[2],
-              contractEnabled: results[3],
-              rentPrice: results[4],
-              usdOracleAddress: results[5],
-              landlordAddress: results[6],
-              tenantAddress: results[7]
-            }
-          });
-        });
+      // console.assert(payload.data.leaseAddress, 'No lease address supplied to load');
+      // console.assert(payload.data.leaseAbi, 'No lease ABI supplied to load');
+      // console.assert(web3, 'No web3 found');
+      // const _web3 = new Web3(web3.currentProvider);
+      // const leaseContract = new _web3.eth.Contract(payload.data.leaseAbi, payload.data.leaseAddress);
+      // Promise.all([
+      //   Promisify(leaseContract.methods.leaseStartTime(), 'call'),
+      //   Promisify(leaseContract.methods.leaseCycleTime(), 'call'),
+      //   Promisify(leaseContract.methods.contractBalance(), 'call'),
+      //   Promisify(leaseContract.methods.contractEnabled(), 'call'),
+      //   Promisify(leaseContract.methods.rentPrice(), 'call'),
+      //   Promisify(leaseContract.methods.usdOracle(), 'call'),
+      //   Promisify(leaseContract.methods.landlord(), 'call'),
+      //   Promisify(leaseContract.methods.tenant(), 'call')
+      // ])
+      //   .then((results: any[]) => {
+      //     Dispatcher.dispatch({
+      //       type: Action.lease.loaded,
+      //       data: {
+      //         leaseStartTime: results[0],
+      //         leaseCycleTime: results[1],
+      //         contractBalanceWei: results[2],
+      //         contractEnabled: results[3],
+      //         rentPrice: results[4],
+      //         usdOracleAddress: results[5],
+      //         landlordAddress: results[6],
+      //         tenantAddress: results[7]
+      //       }
+      //     });
+      //   });
     } else if (payload.type === Action.lease.create) {
       console.assert(payload.data.landlordAddress, 'No landlordAddress supplied');
       console.assert(payload.data.tenantAddress, 'No tenantAddress supplied');

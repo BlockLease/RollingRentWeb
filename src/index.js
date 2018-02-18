@@ -8,6 +8,8 @@ import ReactDOM from 'react-dom';
 import Web3 from 'web3';
 import Home from 'components/Home';
 import DownloadMM from 'components/DownloadMM';
+import RippleLoader from 'components/RippleLoader';
+import CreateLease from 'components/CreateLease';
 
 import Dispatcher from 'src/Dispatcher';
 import Action from 'src/Action';
@@ -35,7 +37,7 @@ window.addEventListener('load', () => {
 
 Dispatcher.register((payload: Action<any>) => {
   if (payload.type !== Action.router.redirect) return;
-  const path = payload.data.path;
+  const path = payload.data.path.replace('#', '');
   window.location.hash = path;
   const pathComponents = path.split('/');
   switch (pathComponents[0]) {
@@ -46,8 +48,19 @@ Dispatcher.register((payload: Action<any>) => {
       ReactDOM.render(<DownloadMM />, document.getElementById('root'));
       break;
     case 'lease':
+      if (pathComponents[1]) {
+        // Lease info
+        ReactDOM.render(<Lease
+          leaseAddress={pathComponents[1]}
+        />, document.getElementById('root'));
+      } else {
+        // create a lease
+        ReactDOM.render(<CreateLease />, document.getElementById('root'));
+      }
       console.log('lease address', pathComponents[1]);
-      ReactDOM.render(<Lease />, document.getElementById('root'));
+      break;
+    case 'loading':
+      ReactDOM.render(<RippleLoader />, document.getElementById('root'));
       break;
     default:
       ReactDOM.render(<Home />, document.getElementById('root'));
@@ -58,7 +71,7 @@ Dispatcher.register((payload: Action<any>) => {
 Dispatcher.dispatch({
   type: Action.router.redirect,
   data: {
-    path: 'home'
+    path: window.location.hash
   }
 });
 
