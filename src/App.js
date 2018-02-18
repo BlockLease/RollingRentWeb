@@ -7,6 +7,7 @@ import Web3 from 'web3';
 import ContractStats from 'components/ContractStats';
 import RippleLoader from 'components/RippleLoader';
 import Promisify from 'utils/Promisify';
+import Header from 'components/Header';
 
 // Injected web3
 declare var web3: Web3;
@@ -33,7 +34,8 @@ type State = {
   usdNeedsUpdate?: boolean,
   rentWei?: string,
   rentPrice?: number,
-  loadingScreenVisible: boolean
+  loadingScreenVisible: boolean,
+  networkId: number
 };
 
 export default class App extends Component<Props, State> {
@@ -48,12 +50,15 @@ export default class App extends Component<Props, State> {
     });
     const rollingRent = new _web3.eth.Contract(contractAbi, contractAddress);
     const usdOracle = new _web3.eth.Contract(oracleAbi, oracleAddress);
+    Promisify(_web3.eth.net, 'getId')
+      .then((networkId: number) => this.setState({networkId}));
     this.state = {
       rollingRent,
       usdOracle,
       web3: _web3,
       activeAccount: '',
-      loadingScreenVisible: true
+      loadingScreenVisible: true,
+      networkId: -1
     };
     setTimeout(() => {
       this.setState({
@@ -102,19 +107,26 @@ export default class App extends Component<Props, State> {
             </div>
           );
           else return (
-            <ContractStats
-              contractActive={this.state.contractActive || false}
-              contractWei={this.state.contractWei || '0'}
-              landlordWei={this.state.landlordWei || '0'}
-              usdPrice={this.state.usdPrice || 0}
-              usdNeedsUpdate={this.state.usdNeedsUpdate || true}
-              rentWei={this.state.rentWei || '0'}
-              rentPrice={this.state.rentPrice || 0}
-              rollingRent={this.state.rollingRent}
-              usdOracle={this.state.usdOracle}
-              web3={this.state.web3}
-              activeAccount={this.state.activeAccount}
-            />
+            <div>
+              <Header
+                web3={this.state.web3}
+                networkId={this.state.networkId}
+                activeAccount={this.state.activeAccount}
+              />
+              <ContractStats
+                contractActive={this.state.contractActive || false}
+                contractWei={this.state.contractWei || '0'}
+                landlordWei={this.state.landlordWei || '0'}
+                usdPrice={this.state.usdPrice || 0}
+                usdNeedsUpdate={this.state.usdNeedsUpdate || true}
+                rentWei={this.state.rentWei || '0'}
+                rentPrice={this.state.rentPrice || 0}
+                rollingRent={this.state.rollingRent}
+                usdOracle={this.state.usdOracle}
+                web3={this.state.web3}
+                activeAccount={this.state.activeAccount}
+              />
+            </div>
           );
         })()}
       </div>
