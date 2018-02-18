@@ -22,13 +22,19 @@ declare var web3: Web3;
 window.addEventListener('load', () => {
   if (typeof web3 === 'undefined') {
     // Metamask not injected
-    Dispatcher.dispatch({
+    setTimeout(() => Dispatcher.dispatch({
       type: Action.router.redirect,
       data: {
         path: 'downloadmm'
       }
-    });
+    }), 800);
   } else {
+    setTimeout(() => Dispatcher.dispatch({
+      type: Action.router.redirect,
+      data: {
+        path: window.location.hash
+      }
+    }), 800);
     Dispatcher.dispatch({
       type: Action.user.update
     });
@@ -68,12 +74,7 @@ Dispatcher.register((payload: Action<any>) => {
   }
 });
 
-Dispatcher.dispatch({
-  type: Action.router.redirect,
-  data: {
-    path: window.location.hash
-  }
-});
+ReactDOM.render(<RippleLoader />, document.getElementById('root'));
 
 const contractAddress = '0xad30db44bb3fbc5157425c7f137ce6b1730e6e11';
 const contractAbiString = '[{"constant":false,"inputs":[],"name":"collectRent","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"contractEnabled","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"bailout","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"rentPeriod","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"assertContractEnabled","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"contractBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"tenant","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"rentWeiValue","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"rentStartTime","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"usdOracle","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"landlordBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"landlord","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"rentPrice","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_usdOracle","type":"address"},{"name":"_landlord","type":"address"},{"name":"_tenant","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}]';

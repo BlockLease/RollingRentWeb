@@ -11,7 +11,9 @@ export default class RippleLoader extends Component<Props, State> {
   render() {
     return (
       <div style={styles.container}>
-        <div className="loader">
+        <div
+          className="loader"
+          style={styles.centered}>
           <div className="loader-inner ball-scale-ripple-multiple">
             <div style={styles.ringStyle}></div>
             <div style={styles.ringStyle}></div>
@@ -26,10 +28,16 @@ export default class RippleLoader extends Component<Props, State> {
 const styles = {
   container: {
     margin: 'auto',
-    width: '100%',
-    textAlign: 'center'
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1
   },
   ringStyle: {
     border: '2px solid #000'
+  },
+  centered: {
+    position: 'fixed',
+    left: '50%',
+    top: '50%'
   }
 };

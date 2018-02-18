@@ -53,7 +53,7 @@ export default class Header extends Component<Props, State> {
         </div>
         <div>
           <a href={etherscanUrl} target='_blank'>
-            your address - {UserStore.activeAccount}
+            your address - {UserStore.activeAccount || 'unknown'}
           </a>
         </div>
       </div>
