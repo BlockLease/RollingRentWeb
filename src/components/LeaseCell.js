@@ -91,17 +91,19 @@ export default class LeaseCell extends Component<Props, State> {
         <div>
           rent owed: {rentOwedEth} = ${rentOwedEth * usdEthPrice}
         </div>
+        <br />
         <div>
-          {(() => {
-            if (UserStore.activeAccount === LeaseStore.tenantAddress) {
-              return 'You are the tenant on this lease';
-            } else if (UserStore.activeAccount === LeaseStore.landlordAddress) {
-              return 'You are the landlord on this lease';
-            }
-          })()}
+          <h3>
+            {(() => {
+              if (UserStore.activeAccount === LeaseStore.tenantAddress) {
+                return 'You are the tenant on this lease';
+              } else if (UserStore.activeAccount === LeaseStore.landlordAddress) {
+                return 'You are the landlord on this lease';
+              }
+            })()}
+          </h3>
         </div>
         <div style={{padding: 4}}>
-          <span>Tenant</span>
           <button
             onClick={() => {
               Promisify(this.state.leaseContract.methods.sign(), 'send', {

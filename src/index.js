@@ -4,7 +4,6 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import App from 'src/App';
 import Web3 from 'web3';
 import Home from 'components/Home';
 import DownloadMM from 'components/DownloadMM';
