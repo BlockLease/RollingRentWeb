@@ -122,7 +122,7 @@ export default class Lease extends Component<Props, State> {
               style={styles.textInput}
             />
             <br />
-            <label>Monthly rent (USD):</label>
+            <label>Monthly Rent (USD):</label>
             <input
               type='text'
               value={this.state.rentPriceUsd}
@@ -130,7 +130,7 @@ export default class Lease extends Component<Props, State> {
               style={styles.textInput}
             />
             <br />
-            <label>Minimum lease term:</label>
+            <label>Minimum Lease Term (Months):</label>
             <input
               type='text'
               value={this.state.minCycleCount}
@@ -138,7 +138,7 @@ export default class Lease extends Component<Props, State> {
               style={styles.textInput}
             />
             <br />
-            <label>Lease start date:</label>
+            <label>Lease Start Date:</label>
             <div style={styles.dateInput}>
               <DatePicker
                 selected={this.state.startDate}
@@ -146,7 +146,8 @@ export default class Lease extends Component<Props, State> {
               />
             </div>
             <br />
-            <input type='submit' title='Deploy Contract' />
+            <br />
+            <input type='submit' value='Deploy Contract' />
           </form>
           <h3 style={{ display: this.state.deploying ? undefined : 'none' }}>
             Your contract is being deployed, you will be automatically redirected in a moment
