@@ -46,9 +46,6 @@ Dispatcher.register((payload: Action<any>) => {
     window.location.hash = path;
     const pathComponents = path.split('/');
     switch (pathComponents[0]) {
-      case 'home':
-        ReactDOM.render(<Home />, document.getElementById('root'));
-        break;
       case 'downloadmm':
         ReactDOM.render(<DownloadMM />, document.getElementById('root'));
         break;
