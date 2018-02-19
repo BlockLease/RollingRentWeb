@@ -77,10 +77,13 @@ export default class Header extends Component<Props, State> {
 
 const styles = {
   container: {
+    // position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
     padding: 4,
     margin: 0,
     height: 50,
-    width: '100%',
     backgroundColor: 'black',
     color: 'white',
     justifyContent: 'space-between',
