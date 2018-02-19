@@ -26,7 +26,12 @@ class USDOracleStore extends Store {
     if (payload.type === Action.user.loaded) {
       const networkId = payload.data.networkId;
       if (networkId === 1) {
-        throw new Error('No mainnet usd oracle available');
+        setTimeout(() => Dispatcher.dispatch({
+          type: Action.usdOracle.update,
+          data: {
+            oracleAddress: '0x632ad54cdf22cf06e2161ea96a04858e97258496'
+          }
+        }), 1);
       } else if (networkId === 4) {
         setTimeout(() => Dispatcher.dispatch({
           type: Action.usdOracle.update,
@@ -34,6 +39,8 @@ class USDOracleStore extends Store {
             oracleAddress: '0xd15c88e2c2ca6756e4fdb73b75a1d5443f6c096d'
           }
         }), 1);
+      } else {
+        throw new Error(`Unknown networkId specified: ${networkId}`);
       }
     }
     if (payload.type === Action.usdOracle.loaded) {
