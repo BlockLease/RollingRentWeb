@@ -5,6 +5,7 @@ node_modules/
 client/bundle.js
 client/*.tmp-browserify*
 client/loaders.min.css
+client/react-datepicker.css
 
 # flow coverage reports
 flow-coverage/

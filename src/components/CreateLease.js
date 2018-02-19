@@ -15,6 +15,8 @@ import USDOracleStore from 'stores/USDOracle';
 import _ from 'lodash';
 import RippleLoader from 'components/RippleLoader';
 import Footer from 'components/Footer';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 
 type Props = { };
 type State = {
@@ -22,7 +24,8 @@ type State = {
   tenantAddress: string,
   rentPriceUsd: string,
   minCycleCount: number,
-  deploying: boolean
+  deploying: boolean,
+  startDate: any
 };
 
 export default class Lease extends Component<Props, State> {
@@ -36,7 +39,8 @@ export default class Lease extends Component<Props, State> {
       tenantAddress: '',
       rentPriceUsd: '',
       minCycleCount: 0,
-      deploying: false
+      deploying: false,
+      startDate: moment()
     };
   }
 
@@ -54,13 +58,14 @@ export default class Lease extends Component<Props, State> {
     event.preventDefault();
     const _web3 = new Web3(UserStore.web3.currentProvider);
     const lease = new _web3.eth.Contract(LeaseABI);
+    console.log(this.state.startDate);
     const transaction = lease.deploy({
       data: LeaseBytecode,
       arguments: [
         USDOracleStore.oracleAddress,
         this.state.landlordAddress,
         this.state.tenantAddress,
-        (Date.now() / 1000) + (60 * 30),
+        moment(this.state.startDate).unix(),
         60 * 60 * 4,
         this.state.rentPriceUsd,
         this.state.minCycleCount
@@ -96,6 +101,7 @@ export default class Lease extends Component<Props, State> {
       <div style={styles.container}>
         <Header />
         <div>
+          <h2>Create a lease</h2>
           <form
             onSubmit={_.bind(this.handleSubmit, this)}
             style={{ display: this.state.deploying ? 'none' : undefined }}
@@ -132,7 +138,15 @@ export default class Lease extends Component<Props, State> {
               style={styles.textInput}
             />
             <br />
-            <input type='submit' />
+            <label>Lease start date:</label>
+            <div style={styles.dateInput}>
+              <DatePicker
+                selected={this.state.startDate}
+                onChange={startDate => this.setState({ startDate })}
+              />
+            </div>
+            <br />
+            <input type='submit' title='Deploy Contract' />
           </form>
           <h3 style={{ display: this.state.deploying ? undefined : 'none' }}>
             Your contract is being deployed, you will be automatically redirected in a moment
@@ -153,5 +167,9 @@ const styles = {
   textInput: {
     margin: 4,
     width: '30%'
+  },
+  dateInput: {
+    margin: 4,
+    display: 'inline-block'
   }
 };

@@ -6,7 +6,8 @@
   "scripts": {
     "clean": "rm ./client/bundle.js* 2> /dev/null || true",
     "prebuild:loaders": "cp ./node_modules/loaders.css/loaders.min.css ./client/",
-    "prebuild": "npm run prebuild:loaders && npm run clean",
+    "prebuild:datepicker": "cp ./node_modules/react-datepicker/dist/react-datepicker.css ./client/",
+    "prebuild": "npm run prebuild:loaders && npm run prebuild:datepicker && npm run clean",
     "build": "npm run prebuild && browserify ./src -t babelify --outfile client/bundle.js",
     "start": "npm run build && http-server ./client",
     "watch": "nodemon -w ./src --exec 'npm run start'",
@@ -21,6 +22,7 @@
     "lodash": "^4.17.5",
     "moment": "^2.20.1",
     "react": "^16.2.0",
+    "react-datepicker": "^1.2.1",
     "react-dom": "^16.2.0",
     "react-router-redux": "^5.0.0-alpha.9",
     "react-scripts": "1.1.0",
