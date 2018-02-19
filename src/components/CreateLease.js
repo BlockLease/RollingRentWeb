@@ -81,6 +81,12 @@ export default class Lease extends Component<Props, State> {
             path: `lease/${contract._address}`
           }
         });
+      })
+      .catch(err => {
+        console.log('err', err);
+        this.setState({
+          deploying: false
+        });
       });
   }
 
@@ -88,16 +94,17 @@ export default class Lease extends Component<Props, State> {
     return (
       <div style={styles.container}>
         <Header />
-        <div style={{
-          display: this.state.deploying ? 'none' : undefined
-        }}
-        >
-          <form onSubmit={_.bind(this.handleSubmit, this)}>
+        <div>
+          <form
+            onSubmit={_.bind(this.handleSubmit, this)}
+            style={{ display: this.state.deploying ? 'none' : undefined }}
+          >
             <label>Landlord Ethereum Address:</label>
             <input
               type='text'
               value={this.state.landlordAddress}
               onChange={e => this.setState({ landlordAddress: e.target.value })}
+              style={styles.textInput}
             />
             <br />
             <label>Tenant Ethereum Address:</label>
@@ -105,24 +112,30 @@ export default class Lease extends Component<Props, State> {
               type='text'
               value={this.state.tenantAddress}
               onChange={e => this.setState({ tenantAddress: e.target.value })}
+              style={styles.textInput}
             />
             <br />
-            <label>Monthly rent (USD)</label>
+            <label>Monthly rent (USD):</label>
             <input
               type='text'
               value={this.state.rentPriceUsd}
               onChange={e => this.setState({ rentPriceUsd: e.target.value })}
+              style={styles.textInput}
             />
             <br />
-            <label>Minimum number of months</label>
+            <label>Minimum lease term:</label>
             <input
               type='text'
               value={this.state.minCycleCount}
               onChange={e => this.setState({ minCycleCount: e.target.value })}
+              style={styles.textInput}
             />
             <br />
             <input type='submit' />
           </form>
+          <h3 style={{ display: this.state.deploying ? undefined : 'none' }}>
+            Your contract is being deployed, you will be automatically redirected in a moment
+          </h3>
         </div>
       </div>
     );
@@ -134,5 +147,9 @@ const styles = {
     margin: 'auto',
     width: '100%',
     textAlign: 'center'
+  },
+  textInput: {
+    margin: 4,
+    width: '30%'
   }
 };

@@ -68,7 +68,7 @@ Dispatcher.register((payload: Action<any>) => {
         ReactDOM.render(<RippleLoader />, document.getElementById('root'));
         break;
       default:
-        ReactDOM.render(<Home />, document.getElementById('root'));
+        ReactDOM.render(<CreateLease />, document.getElementById('root'));
         break;
     }
   }, 1);
