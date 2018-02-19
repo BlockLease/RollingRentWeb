@@ -8,6 +8,7 @@ import UserStore from 'stores/User';
 import Dispatcher from 'src/Dispatcher';
 import Action from 'src/Action';
 import EtherscanURL from 'utils/EtherscanURL';
+import USDOracleStore from 'stores/USDOracle';
 
 type Props = {};
 type State = {
@@ -27,16 +28,7 @@ export default class Header extends Component<Props, State> {
 
   componentDidMount() {
     this.dispatchToken = Dispatcher.register((payload: Action<any>) => {
-      if (payload.type === Action.user.loaded) {
-        const networkId = payload.data.networkId;
-        let networkName = 'unknown network';
-        if (networkId === 1) {
-          networkName = 'mainnet';
-        } else if (networkId === 4) {
-          networkName = 'rinkeby';
-        }
-        this.setState({ networkName });
-      }
+      setTimeout(() => this.forceUpdate(), 1);
     });
   }
 
@@ -44,17 +36,29 @@ export default class Header extends Component<Props, State> {
     Dispatcher.unregister(this.dispatchToken);
   }
 
+  networkName(): string {
+    if (UserStore.networkId === 1) {
+      return 'mainnet';
+    } else if (UserStore.networkId === 4) {
+      return 'rinkeby';
+    } else {
+      return 'unknown network';
+    }
+  }
+
   render() {
     const etherscanUrl = EtherscanURL(UserStore.activeAccount);
     return (
       <div style={styles.container}>
         <div>
-          blocklease - {this.state.networkName}
+          blocklease - {this.networkName()}
         </div>
         <div>
           <a href={etherscanUrl} target='_blank'>
             your address - {UserStore.activeAccount || 'unknown'}
           </a>
+          <span width='20' />
+          current price ${USDOracleStore.price || '0'}
         </div>
       </div>
     );

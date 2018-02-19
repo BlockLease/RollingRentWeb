@@ -9,6 +9,7 @@ export default class Action<T> {
   static router;
   static user;
   static lease;
+  static usdOracle;
 }
 
 Action.router = {
@@ -24,4 +25,9 @@ Action.lease = {
   loaded: 'lease.loaded',
   update: 'lease.update',
   create: 'lease.create'
-}
+};
+
+Action.usdOracle = {
+  loaded: 'usdOracle.loaded',
+  update: 'usdOracle.update'
+};

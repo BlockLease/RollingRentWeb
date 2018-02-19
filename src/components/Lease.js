@@ -9,7 +9,9 @@ import Action from 'src/Action';
 import UserStore from 'stores/User';
 import LeaseStore from 'stores/Lease';
 
-type Props = { };
+type Props = {
+  leaseAddress: string
+};
 type State = { };
 
 export default class Lease extends Component<Props, State> {
@@ -18,7 +20,14 @@ export default class Lease extends Component<Props, State> {
 
   componentDidMount() {
     this.dispatchToken = Dispatcher.register(action => {
-      if (action.type === Action.lease.loaded) this.forceUpdate();
+      setTimeout(() => this.forceUpdate(), 1);
+    });
+    
+    Dispatcher.dispatch({
+      type: Action.lease.update,
+      data: {
+        leaseAddress: this.props.leaseAddress
+      }
     });
   }
 
@@ -31,7 +40,10 @@ export default class Lease extends Component<Props, State> {
       <div style={styles.container}>
         <Header />
         <div>
-          {LeaseStore.landlordAddress}
+          landlord: {LeaseStore.landlordAddress}
+        </div>
+        <div>
+          tenant: {LeaseStore.tenantAddress}
         </div>
       </div>
     );
