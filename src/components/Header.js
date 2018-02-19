@@ -48,17 +48,27 @@ export default class Header extends Component<Props, State> {
 
   render() {
     const etherscanUrl = EtherscanURL(UserStore.activeAccount);
+    const gdaxUrl = 'https://www.gdax.com/trade/ETH-USD';
     return (
       <div style={styles.container}>
         <div>
           blocklease - {this.networkName()}
         </div>
         <div>
-          <a href={etherscanUrl} target='_blank'>
-            your address - {UserStore.activeAccount || 'unknown'}
+          <a href={etherscanUrl} target='_blank' style={styles.link}>
+            {UserStore.activeAccount || 'unknown account'}
           </a>
-          <span width='20' />
-          current price ${USDOracleStore.price || '0'}
+          <a href={gdaxUrl} target='_blank' style={styles.link}>
+            ${USDOracleStore.price / 100 || '0'} / ETH
+          </a>
+          <button onClick={() => {
+            Dispatcher.dispatch({
+              type: Action.usdOracle.beginUpdate,
+              data: {}
+            });
+          }}>
+            Update Price
+          </button>
         </div>
       </div>
     );
@@ -79,5 +89,9 @@ const styles = {
   headerItem: {
     padding: 8,
     display: 'inline-block'
+  },
+  link: {
+    color: 'white',
+    padding: 4
   }
 };

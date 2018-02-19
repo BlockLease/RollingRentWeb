@@ -13,6 +13,7 @@ import Web3 from 'web3';
 import Promisify from 'utils/Promisify';
 import moment from 'moment';
 import USDOracleStore from 'stores/USDOracle';
+import EtherscanURL from 'utils/EtherscanURL';
 
 type Props = {
   leaseAddress: string
@@ -49,10 +50,21 @@ export default class LeaseCell extends Component<Props, State> {
   }
 
   render() {
+    const contractUrl = EtherscanURL(this.props.leaseAddress);
+
+    const usdEthPrice = USDOracleStore.price / 100;
+    const contractBalanceEth = UserStore.web3.utils.fromWei(LeaseStore.contractBalanceWei || '0');
+    const landlordBalanceEth = UserStore.web3.utils.fromWei(LeaseStore.landlordBalanceWei || '0');
+    const rentOwedEth = UserStore.web3.utils.fromWei(LeaseStore.rentOwedWei || '0');
+    const rentPriceUsd = LeaseStore.rentPrice || '0';
+
     return (
       <div style={styles.container}>
         <h2>
-          Lease Contract: {this.props.leaseAddress}
+          Lease Contract:&nbsp;
+          <a href={contractUrl} target='_blank' style={styles.link}>
+            {this.props.leaseAddress}
+          </a>
         </h2>
         <h3>
           Status: {LeaseStore.signed ? 'Active' : 'Awaiting signatures'}
@@ -64,38 +76,61 @@ export default class LeaseCell extends Component<Props, State> {
           tenant: {LeaseStore.tenantAddress}
         </div>
         <div>
-          lease cycle length: {LeaseStore.leaseCycleTime}
-        </div>
-        <div>
           lease start date: {moment.unix(LeaseStore.leaseStartTime).format("dddd, MMMM Do YYYY, h:mm:ss a")}
         </div>
         <div>
+          lease cycle length: {LeaseStore.leaseCycleTime}
+        </div>
+        <div>
+          rent price: ${rentPriceUsd} = {+rentPriceUsd / usdEthPrice} eth
+        </div>
+        <br />
+        <div>
+          contract balance: {contractBalanceEth} = ${contractBalanceEth * usdEthPrice}
+        </div>
+        <div>
+          rent owed: {rentOwedEth} = ${rentOwedEth * usdEthPrice}
+        </div>
+        <div>
+          {(() => {
+            if (UserStore.activeAccount === LeaseStore.tenantAddress) {
+              return 'You are the tenant on this lease';
+            } else if (UserStore.activeAccount === LeaseStore.landlordAddress) {
+              return 'You are the landlord on this lease';
+            }
+          })()}
+        </div>
+        <div style={{padding: 4}}>
           <span>Tenant</span>
-          <button onClick={() => {
-            Promisify(this.state.leaseContract.methods.sign(), 'send', {
-              from: UserStore.activeAccount
-            })
-              .then(() => Dispatcher.dispatch({
-                type: Action.lease.update,
-                data: {
-                  leaseAddress: this.props.leaseAddress
-                }
-              }));
-            // contract.
-          }}>Sign</button>
-          <button onClick={() => {
-            Promisify(this.state.leaseContract.methods.payRent(), 'send', {
-              from: UserStore.activeAccount,
-              value: USDOracleStore.price
-            })
-              .then(() => Dispatcher.dispatch({
-                type: Action.lease.update,
-                data: {
-                  leaseAddress: this.props.leaseAddress
-                }
-              }));
-            // contract.
-          }}>Pay Rent</button>
+          <button
+            onClick={() => {
+              Promisify(this.state.leaseContract.methods.sign(), 'send', {
+                from: UserStore.activeAccount
+              })
+                .then(() => Dispatcher.dispatch({
+                  type: Action.lease.update,
+                  data: {
+                    leaseAddress: this.props.leaseAddress
+                  }
+                }));
+            }}
+            style={{
+              display: LeaseStore.signed ? 'none' : undefined
+            }}
+          >
+            Sign
+          </button>
+          <button
+            onClick={() => Dispatcher.dispatch({
+              type: Action.lease.payRent,
+              data: {}
+            })}
+            style={{
+              display: LeaseStore.signed ? undefined : 'none'
+            }}
+          >
+            Pay Rent
+          </button>
         </div>
       </div>
     );
@@ -106,6 +141,12 @@ const styles = {
   container: {
     margin: 'auto',
     padding: 8,
-    textAlign: 'center'
+    textAlign: 'center',
+    border: '2px solid #000',
+    margin: 8,
+    borderRadius: 20
+  },
+  link: {
+    color: 'black'
   }
 };

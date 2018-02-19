@@ -24,10 +24,12 @@ Action.user = {
 Action.lease = {
   loaded: 'lease.loaded',
   update: 'lease.update',
-  create: 'lease.create'
+  create: 'lease.create',
+  payRent: 'lease.payRent'
 };
 
 Action.usdOracle = {
   loaded: 'usdOracle.loaded',
-  update: 'usdOracle.update'
+  update: 'usdOracle.update',
+  beginUpdate: 'usdOracle.beginUpdate'
 };

@@ -64,7 +64,6 @@ Dispatcher.register((payload: Action<any>) => {
           // create a lease
           ReactDOM.render(<CreateLease />, document.getElementById('root'));
         }
-        console.log('lease address', pathComponents[1]);
         break;
       case 'loading':
         ReactDOM.render(<RippleLoader />, document.getElementById('root'));

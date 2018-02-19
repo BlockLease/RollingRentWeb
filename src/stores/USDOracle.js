@@ -9,6 +9,7 @@ import Web3 from 'web3';
 import Promisify from 'utils/Promisify';
 import UserStore from 'stores/User';
 import _ from 'lodash';
+import USDOracleABI from 'utils/USDOracleABI';
 
 class USDOracleStore extends Store {
 
@@ -30,17 +31,16 @@ class USDOracleStore extends Store {
         setTimeout(() => Dispatcher.dispatch({
           type: Action.usdOracle.update,
           data: {
-            oracleAddress: '0x4159466da2e1caa9a4151fd9cf232c6Dd940372A'
+            oracleAddress: '0xd15c88e2c2ca6756e4fdb73b75a1d5443f6c096d'
           }
         }), 1);
       }
     }
     if (payload.type === Action.usdOracle.loaded) {
-      console.log(payload.data);
       _.assign(this, payload.data);
     } else if (payload.type === Action.usdOracle.update) {
       const _web3 = new Web3(UserStore.web3.currentProvider);
-      const oracleContract = new _web3.eth.Contract(USDOracleStore.abi, payload.data.oracleAddress);
+      const oracleContract = new _web3.eth.Contract(USDOracleABI, payload.data.oracleAddress);
       Promise.all([
         Promisify(oracleContract.methods.price(), 'call'),
         Promisify(oracleContract.methods.priceNeedsUpdate(), 'call'),
@@ -52,6 +52,7 @@ class USDOracleStore extends Store {
           Dispatcher.dispatch({
             type: Action.usdOracle.loaded,
             data: {
+              oracleAddress: payload.data.oracleAddress,
               price: results[0],
               priceNeedsUpdate: results[1],
               updateCost: results[2],
@@ -60,10 +61,23 @@ class USDOracleStore extends Store {
             }
           });
         });
+    } else if (payload.type === Action.usdOracle.beginUpdate) {
+      const _web3 = new Web3(UserStore.web3.currentProvider);
+      const oracleContract = new _web3.eth.Contract(USDOracleABI, this.oracleAddress);
+      Promisify(oracleContract.methods.update(), 'send', {
+        from: UserStore.activeAccount,
+        value: this.updateCost
+      })
+        .then(() => {
+          Dispatcher.dispatch({
+            type: Action.usdOracle.update,
+            data: {
+              oracleAddress: this.oracleAddress
+            }
+          });
+        });
     }
   }
 }
-
-USDOracleStore.abi = JSON.parse( '[{"constant":false,"inputs":[{"name":"_myid","type":"bytes32"},{"name":"_result","type":"string"}],"name":"__callback","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"myid","type":"bytes32"},{"name":"result","type":"string"},{"name":"proof","type":"bytes"}],"name":"__callback","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"datasource","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"priceNeedsUpdate","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getPrice","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_tokenAddress","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferERC20","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"price","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"update","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"_usd","type":"uint256"}],"name":"usdToWei","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"priceExpirationInterval","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"updateCost","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lastUpdated","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]');
 
 export default new USDOracleStore(Dispatcher);
