@@ -17,31 +17,9 @@ import UserStore from 'stores/User';
 // Injected web3
 declare var web3: Web3;
 
-window.addEventListener('load', () => {
-  if (typeof web3 === 'undefined') {
-    // Metamask not injected
-    setTimeout(() => Dispatcher.dispatch({
-      type: Action.router.redirect,
-      data: {
-        path: 'downloadmm'
-      }
-    }), 800);
-  } else {
-    setTimeout(() => Dispatcher.dispatch({
-      type: Action.router.redirect,
-      data: {
-        path: window.location.hash
-      }
-    }), 800);
-    Dispatcher.dispatch({
-      type: Action.user.update
-    });
-  }
-});
-
 Dispatcher.register((payload: Action<any>) => {
   if (payload.type !== Action.router.redirect) return;
-  setTimeout(() => {
+  Promise.resolve().then(() => {
     const path = payload.data.path.replace('#', '');
     window.location.hash = path;
     const pathComponents = path.split('/');
@@ -60,14 +38,51 @@ Dispatcher.register((payload: Action<any>) => {
           ReactDOM.render(<CreateLease />, document.getElementById('root'));
         }
         break;
-      case 'loading':
-        ReactDOM.render(<RippleLoader />, document.getElementById('root'));
-        break;
       default:
         ReactDOM.render(<CreateLease />, document.getElementById('root'));
         break;
     }
-  }, 1);
+  });
 });
 
-ReactDOM.render(<RippleLoader />, document.getElementById('root'));
+const loadingToken = setInterval(() => {
+  if (document.readyState !== 'complete') return;
+  clearInterval(loadingToken);
+
+  Promise.resolve()
+    .then(() => {
+      const loadingOverlay = document.getElementById('loading-overlay');
+      // $FlowFixMe
+      loadingOverlay.style.opacity = 0;
+      setTimeout(() => Promise.resolve().then(() => {
+        // $FlowFixMe
+        document.body.removeChild(loadingOverlay);
+        Dispatcher.dispatch({
+          type: Action.router.redirect,
+          data: {
+            path: window.location.hash
+          }
+        });
+      }), 1000);
+
+      if (typeof web3 === 'undefined') {
+        // Metamask not injected
+        Dispatcher.dispatch({
+          type: Action.router.redirect,
+          data: {
+            path: 'downloadmm'
+          }
+        });
+      } else {
+        Dispatcher.dispatch({
+          type: Action.user.update
+        });
+        Dispatcher.dispatch({
+          type: Action.router.redirect,
+          data: {
+            path: window.location.hash
+          }
+        });
+      }
+    });
+}, 500);

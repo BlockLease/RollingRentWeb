@@ -23,6 +23,7 @@ class UserStore extends Store {
       _.assign(this, payload.data);
     } else if (payload.type === Action.user.update) {
       const _web3 = new Web3(web3.currentProvider);
+      this.web3 = _web3;
       Promise.all([
         Promisify(_web3.eth, 'getAccounts'),
         Promisify(_web3.eth.net, 'getId')
