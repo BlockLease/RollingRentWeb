@@ -1,8 +1,8 @@
-# RollingRent Web Interface
+# BlockLease Web Interface
 
 [![CircleCI](https://img.shields.io/circleci/project/github/BlockLease/web.svg)](https://circleci.com/gh/BlockLease/web/tree/master)
 
-A web interface for the [Rolling Rent](https://github.com/JChanceHud/RollingRent) Ethereum smart contract.
+A web interface for [BlockLease](https://blocklease.io) Ethereum smart contracts.
 
 ## Usage
 
