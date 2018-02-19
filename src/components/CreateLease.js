@@ -14,6 +14,7 @@ import Web3 from 'web3';
 import USDOracleStore from 'stores/USDOracle';
 import _ from 'lodash';
 import RippleLoader from 'components/RippleLoader';
+import Footer from 'components/Footer';
 
 type Props = { };
 type State = {
@@ -137,6 +138,7 @@ export default class Lease extends Component<Props, State> {
             Your contract is being deployed, you will be automatically redirected in a moment
           </h3>
         </div>
+        <Footer />
       </div>
     );
   }

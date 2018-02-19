@@ -5,7 +5,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Web3 from 'web3';
-import Home from 'components/Home';
 import DownloadMM from 'components/DownloadMM';
 import RippleLoader from 'components/RippleLoader';
 import CreateLease from 'components/CreateLease';

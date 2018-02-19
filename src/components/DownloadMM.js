@@ -4,6 +4,7 @@
 
 import React, { Component } from 'react';
 import Header from 'components/Header';
+import Footer from 'components/Footer';
 
 type Props = { };
 type State = { };
@@ -17,6 +18,7 @@ export default class DownloadMM extends Component<Props, State> {
         <a href="https://metamask.io/" target="_blank">
           <img src="/download-metamask.png" width="400" height="121" />
         </a>
+        <Footer />
       </div>
     );
   }

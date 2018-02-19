@@ -9,6 +9,7 @@ import Action from 'src/Action';
 import UserStore from 'stores/User';
 import LeaseStore from 'stores/Lease';
 import LeaseCell from 'components/LeaseCell';
+import Footer from 'components/Footer';
 
 type Props = {
   leaseAddress: string
@@ -43,6 +44,7 @@ export default class Lease extends Component<Props, State> {
         <div>
           <LeaseCell leaseAddress={this.props.leaseAddress} />
         </div>
+        <Footer />
       </div>
     );
   }
