@@ -20,7 +20,7 @@ export default class Home extends Component<Props, State> {
             Dispatcher.dispatch({
               type: Action.router.redirect,
               data: {
-                path: 'lease/0xa74E58A59A77F59570f00A446744df61a7ACF732'
+                path: 'lease/0xaCBcf7a915CadcfFA9d60426947EEf80cC8D8cab'
               }
             })
           }}>Lease</button>

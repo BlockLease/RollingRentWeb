@@ -15,7 +15,7 @@ declare var web3: Web3;
 
 class LeaseStore extends Store {
 
-  static leaseAbi;
+  leaseAbi: any;
   static leaseBytecode;
 
   leaseAddress: string;
