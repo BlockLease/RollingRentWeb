@@ -6,7 +6,7 @@ import Dispatcher from 'src/Dispatcher';
 import Action from 'src/Action';
 
 const rinkebyPrefix = 'https://rinkeby.etherscan.io/address/';
-const mainnetPrefix = 'https://etherscan.io/adress/';
+const mainnetPrefix = 'https://etherscan.io/address/';
 
 let activePrefix = rinkebyPrefix;
 
