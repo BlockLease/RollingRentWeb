@@ -43,6 +43,20 @@ const LeaseABI = JSON.parse(`[
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "landlordSigned",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "signed",
 		"outputs": [
 			{
@@ -144,6 +158,20 @@ const LeaseABI = JSON.parse(`[
 		"outputs": [],
 		"payable": true,
 		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "tenantSigned",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
