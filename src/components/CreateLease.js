@@ -22,7 +22,7 @@ type Props = { };
 type State = {
   landlordAddress: string,
   tenantAddress: string,
-  rentPriceUsd: string,
+  cyclePriceUsd: string,
   minCycleCount: number,
   deploying: boolean,
   startDate: any,
@@ -38,7 +38,7 @@ export default class Lease extends Component<Props, State> {
     this.state = {
       landlordAddress: '',
       tenantAddress: '',
-      rentPriceUsd: '',
+      cyclePriceUsd: '',
       minCycleCount: 6,
       deploying: false,
       startDate: moment(),
@@ -78,7 +78,7 @@ export default class Lease extends Component<Props, State> {
         tenantAddress: this.state.tenantAddress,
         leaseStartTime: moment(this.state.startDate).unix(),
         leaseCycleTime: 60 * 60 * 24 * this.state.cycleTimeDays,
-        leaseCyclePriceUsd: this.state.rentPriceUsd,
+        leaseCyclePriceUsd: this.state.cyclePriceUsd,
         minCycleCount: this.state.minCycleCount
       }
     });
@@ -121,11 +121,11 @@ export default class Lease extends Component<Props, State> {
               style={styles.textInput}
             />
             <br />
-            <label>Cycle Rent Price (USD):</label>
+            <label>Cycle Price (USD):</label>
             <input
               type='text'
-              value={this.state.rentPriceUsd}
-              onChange={e => this.setState({ rentPriceUsd: e.target.value })}
+              value={this.state.cyclePriceUsd}
+              onChange={e => this.setState({ cyclePriceUsd: e.target.value })}
               style={styles.textInput}
             />
             <br />
