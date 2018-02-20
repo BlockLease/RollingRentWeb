@@ -8,11 +8,13 @@ import Web3 from 'web3';
 import DownloadMM from 'components/DownloadMM';
 import RippleLoader from 'components/RippleLoader';
 import CreateLease from 'components/CreateLease';
+import USDOracle from 'components/USDOracle';
 
 import Dispatcher from 'src/Dispatcher';
 import Action from 'src/Action';
 import Lease from 'components/Lease';
 import UserStore from 'stores/User';
+import USDOracleStore from 'stores/USDOracle';
 
 // Injected web3
 declare var web3: Web3;
@@ -37,6 +39,11 @@ Dispatcher.register((payload: Action<any>) => {
           // create a lease
           ReactDOM.render(<CreateLease />, document.getElementById('root'));
         }
+        break;
+      case 'oracle':
+        ReactDOM.render(<USDOracle
+          oracleAddress={pathComponents[1] || USDOracleStore.oracleAddress}
+        />, document.getElementById('root'));
         break;
       default:
         ReactDOM.render(<CreateLease />, document.getElementById('root'));
