@@ -27,6 +27,12 @@ class USDOracleStore extends Store {
     return moment.unix(+this.lastUpdated || 0);
   }
 
+  expirationMoment(): moment {
+    return moment.unix(
+      (+this.lastUpdated || 0) + (+this.priceExpirationInterval || 0)
+    );
+  }
+
   constructor(dispatcher: any) {
     super(dispatcher);
     this.priceNeedsUpdate = true;

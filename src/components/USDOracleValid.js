@@ -51,7 +51,7 @@ export default class USDOracleValid extends Component<Props, State> {
           }}
         >
           <span style={styles.valid}>
-            Price expires in {USDOracleStore.lastUpdatedMoment().fromNow(true)}
+            Price expires in {USDOracleStore.expirationMoment().fromNow(true)}
           </span>
         </div>
       </div>
@@ -71,6 +71,7 @@ const styles = {
     backgroundColor: 'green',
     borderRadius: 20,
     border: '2px solid #000',
+    color: 'white',
     padding: 4
   },
   invalid: {
