@@ -60,7 +60,7 @@ export default class Header extends Component<Props, State> {
             {UserStore.activeAccount || 'unknown account'}
           </a>
           <a href={gdaxUrl} target='_blank' style={styles.link}>
-            ${USDOracleStore.price / 100 || '0'} / ETH
+            ${+USDOracleStore.price / 100 || '0'} / ETH
           </a>
           <button onClick={() => {
             Dispatcher.dispatch({
