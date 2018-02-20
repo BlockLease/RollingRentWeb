@@ -25,7 +25,8 @@ type State = {
   rentPriceUsd: string,
   minCycleCount: number,
   deploying: boolean,
-  startDate: any
+  startDate: any,
+  cycleTimeDays: number
 };
 
 export default class Lease extends Component<Props, State> {
@@ -38,9 +39,10 @@ export default class Lease extends Component<Props, State> {
       landlordAddress: '',
       tenantAddress: '',
       rentPriceUsd: '',
-      minCycleCount: 0,
+      minCycleCount: 6,
       deploying: false,
-      startDate: moment()
+      startDate: moment(),
+      cycleTimeDays: 30
     };
   }
 
@@ -75,7 +77,7 @@ export default class Lease extends Component<Props, State> {
         landlordAddress: this.state.landlordAddress,
         tenantAddress: this.state.tenantAddress,
         leaseStartTime: moment(this.state.startDate).unix(),
-        leaseCycleTime: 60 * 60 * 4,
+        leaseCycleTime: 60 * 60 * 24 * this.state.cycleTimeDays,
         rentPriceUsd: this.state.rentPriceUsd,
         minCycleCount: this.state.minCycleCount
       }
@@ -111,7 +113,15 @@ export default class Lease extends Component<Props, State> {
               style={styles.textInput}
             />
             <br />
-            <label>Monthly Rent (USD):</label>
+            <label>Cycle Time (Days):</label>
+            <input
+              type='text'
+              value={this.state.cycleTimeDays}
+              onChange={e => this.setState({ cycleTimeDays: e.target.value })}
+              style={styles.textInput}
+            />
+            <br />
+            <label>Cycle Rent Price (USD):</label>
             <input
               type='text'
               value={this.state.rentPriceUsd}
@@ -119,7 +129,7 @@ export default class Lease extends Component<Props, State> {
               style={styles.textInput}
             />
             <br />
-            <label>Minimum Lease Term (Months):</label>
+            <label>Minimum Cycle Count:</label>
             <input
               type='text'
               value={this.state.minCycleCount}
@@ -134,7 +144,6 @@ export default class Lease extends Component<Props, State> {
                 onChange={startDate => this.setState({ startDate })}
               />
             </div>
-            <br />
             <br />
             <input type='submit' value='Deploy Contract' />
           </form>
