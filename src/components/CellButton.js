@@ -23,9 +23,10 @@ export default class CellButton extends Component<Props, State> {
   }
 
   render() {
+    const containerStyle = _.assign(styles.container, this.props.style);
     return (
       <div
-        style={_.assign(styles.container, this.props.style || {})}
+        style={containerStyle}
         onClick={this.props.onClick}
       >
         <div style={styles.buttonText}>
