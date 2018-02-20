@@ -15,14 +15,13 @@ import Promisify from 'utils/Promisify';
 import moment from 'moment';
 import USDOracleStore from 'stores/USDOracle';
 import EtherscanURL from 'utils/EtherscanURL';
-import USDOracleValid from 'components/USDOracleValid';
-import { setSafeInterval } from 'utils/SafeTime';
+import { setSafeInterval, nextTick } from 'utils/SafeTime';
+import CellButton from 'components/CellButton';
 
 type Props = {
   oracleAddress: string
 };
 type State = {
-  oracleContract: Web3.Contract
 };
 
 export default class USDOracleCell extends Component<Props, State> {
@@ -32,13 +31,7 @@ export default class USDOracleCell extends Component<Props, State> {
 
   componentDidMount() {
     this.dispatchToken = Dispatcher.register(action => {
-      if (UserStore.web3 && this.props.oracleAddress) {
-        this.setState({
-          oracleContract: new UserStore.web3.eth.Contract(USDOracleABI, this.props.oracleAddress)
-        });
-      } else {
-        this.forceUpdate();
-      }
+      nextTick(() => this.forceUpdate());
     });
 
     const updateIfLoaded = () => {
@@ -61,6 +54,11 @@ export default class USDOracleCell extends Component<Props, State> {
     clearInterval(this.intervalToken);
   }
 
+  isPriceValid(): boolean {
+    console.log(USDOracleStore.priceNeedsUpdate);
+    return !USDOracleStore.priceNeedsUpdate;
+  }
+
   render() {
     const contractUrl = EtherscanURL(this.props.oracleAddress);
     return (
@@ -74,8 +72,20 @@ export default class USDOracleCell extends Component<Props, State> {
         <h3>
           Last Updated: {USDOracleStore.lastUpdatedMoment().format('MMM D, YYYY - hh:mm a')}
         </h3>
-        <div style={styles.centeredText}>
-          <USDOracleValid />
+        <div style={styles.buttonContainer}>
+          <CellButton
+            style={{
+              backgroundColor: this.isPriceValid() ? 'green' : 'red'
+            }}
+            onClick={() => {
+              Dispatcher.dispatch({
+                type: Action.usdOracle.beginUpdate
+              });
+            }}
+            title={this.isPriceValid()
+              ? 'Price expired, click to update'
+              : `Price expires in ${USDOracleStore.expirationMoment().fromNow(true)}`}
+          />
         </div>
       </div>
     );
@@ -91,8 +101,8 @@ const styles = {
     margin: 8,
     borderRadius: 20
   },
-  centeredText: {
-    textAlign: 'center'
+  buttonContainer: {
+    margin: 'auto'
   },
   link: {
     color: 'black'

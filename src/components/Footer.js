@@ -9,6 +9,7 @@ import Dispatcher from 'src/Dispatcher';
 import Action from 'src/Action';
 import EtherscanURL from 'utils/EtherscanURL';
 import USDOracleStore from 'stores/USDOracle';
+import { nextTick } from 'utils/SafeTime';
 
 type Props = {};
 type State = {
@@ -21,7 +22,7 @@ export default class Footer extends Component<Props, State> {
 
   componentDidMount() {
     this.dispatchToken = Dispatcher.register((payload: Action<any>) => {
-      this.forceUpdate();
+      nextTick(() => this.forceUpdate());
     });
   }
 

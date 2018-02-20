@@ -14,6 +14,7 @@ import Promisify from 'utils/Promisify';
 import moment from 'moment';
 import USDOracleStore from 'stores/USDOracle';
 import EtherscanURL from 'utils/EtherscanURL';
+import { nextTick } from 'utils/SafeTime';
 
 type Props = {
   leaseAddress: string
@@ -33,7 +34,7 @@ export default class LeaseCell extends Component<Props, State> {
           leaseContract: new UserStore.web3.eth.Contract(LeaseABI, this.props.leaseAddress)
         });
       } else {
-        setTimeout(() => this.forceUpdate(), 1);
+        nextTick(() => this.forceUpdate());
       }
     });
 
@@ -52,7 +53,7 @@ export default class LeaseCell extends Component<Props, State> {
   render() {
     const contractUrl = EtherscanURL(this.props.leaseAddress);
 
-    const usdEthPrice = USDOracleStore.price / 100;
+    const usdEthPrice = +USDOracleStore.price / 100;
     const contractBalanceEth = UserStore.web3.utils.fromWei(LeaseStore.contractBalanceWei || '0');
     const landlordBalanceEth = UserStore.web3.utils.fromWei(LeaseStore.landlordBalanceWei || '0');
     const rentOwedEth = UserStore.web3.utils.fromWei(LeaseStore.rentOwedWei || '0');

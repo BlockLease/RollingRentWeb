@@ -58,12 +58,12 @@ export default class CreateLeaseCell extends Component<Props, State> {
             }
           });
         });
-        this.setState({ deploying: false });
+        nextTick(() => this.setState({ deploying: false }));
       } else if (action.type === Action.lease.error) {
         console.log('Error deploying', action.data);
-        this.setState({ deploying: false });
+        nextTick(() => this.setState({ deploying: false }));
       } else {
-        this.forceUpdate();
+        nextTick(() => this.forceUpdate());
       }
     });
   }
