@@ -10,6 +10,7 @@ import Promisify from 'utils/Promisify';
 import UserStore from 'stores/User';
 import _ from 'lodash';
 import USDOracleABI from 'utils/USDOracleABI';
+import moment from 'moment'
 
 class USDOracleStore extends Store {
 
@@ -21,6 +22,15 @@ class USDOracleStore extends Store {
   lastUpdated: string;
   priceExpirationInterval: string;
   oracleAddress: string;
+
+  lastUpdatedMoment(): moment {
+    return moment.unix(+this.lastUpdated || 0);
+  }
+
+  constructor(dispatcher: any) {
+    super(dispatcher);
+    this.priceNeedsUpdate = true;
+  }
 
   __onDispatch(payload: Action<any>): void {
     if (payload.type === Action.user.loaded) {

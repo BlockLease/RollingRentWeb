@@ -15,6 +15,8 @@ import Promisify from 'utils/Promisify';
 import moment from 'moment';
 import USDOracleStore from 'stores/USDOracle';
 import EtherscanURL from 'utils/EtherscanURL';
+import USDOracleValid from 'components/USDOracleValid';
+import { setSafeInterval } from 'utils/SafeTime';
 
 type Props = {
   oracleAddress: string
@@ -26,6 +28,7 @@ type State = {
 export default class USDOracleCell extends Component<Props, State> {
 
   dispatchToken: string;
+  intervalToken: number;
 
   componentDidMount() {
     this.dispatchToken = Dispatcher.register(action => {
@@ -38,23 +41,28 @@ export default class USDOracleCell extends Component<Props, State> {
       }
     });
 
-    if (this.props.oracleAddress) {
-      Dispatcher.dispatch({
-        type: Action.usdOracle.update,
-        data: {
-          oracleAddress: this.props.oracleAddress
-        }
-      });
-    }
+    const updateIfLoaded = () => {
+      if (this.props.oracleAddress) {
+        Dispatcher.dispatch({
+          type: Action.usdOracle.update,
+          data: {
+            oracleAddress: this.props.oracleAddress
+          }
+        });
+      }
+    };
+
+    this.intervalToken = setSafeInterval(updateIfLoaded, 10000);
+    updateIfLoaded();
   }
 
   componentWillUnmount() {
     Dispatcher.unregister(this.dispatchToken);
+    clearInterval(this.intervalToken);
   }
 
   render() {
     const contractUrl = EtherscanURL(this.props.oracleAddress);
-    const lastUpdated = USDOracleStore.lastUpdated || 0;
     return (
       <div style={styles.container}>
         <h2>
@@ -64,22 +72,10 @@ export default class USDOracleCell extends Component<Props, State> {
           </a>
         </h2>
         <h3>
-          Last Updated: {moment.unix(+lastUpdated).format('MMM D, YYYY - hh:mm a')}
+          Last Updated: {USDOracleStore.lastUpdatedMoment().format('MMM D, YYYY - hh:mm a')}
         </h3>
-        <div>
-          Needs Update: {USDOracleStore.priceNeedsUpdate ? 'Yes' : 'No'}
-        </div>
-        <div style={{padding: 4}}>
-          <button
-            onClick={() => {
-              Dispatcher.dispatch({
-                type: Action.usdOracle.beginUpdate,
-                data: {}
-              });
-            }}
-          >
-            Update Oracle
-          </button>
+        <div style={styles.centeredText}>
+          <USDOracleValid />
         </div>
       </div>
     );
@@ -94,6 +90,9 @@ const styles = {
     border: '2px solid #000',
     margin: 8,
     borderRadius: 20
+  },
+  centeredText: {
+    textAlign: 'center'
   },
   link: {
     color: 'black'
