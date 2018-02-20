@@ -11,7 +11,7 @@ import { nextTick } from 'utils/SafeTime';
 type Props = {
   title: string,
   onClick: Function,
-  style: any
+  buttonStyle: any
 };
 
 type State = {};
@@ -23,13 +23,13 @@ export default class CellButton extends Component<Props, State> {
   }
 
   render() {
-    const containerStyle = _.assign(styles.container, this.props.style);
+    const buttonStyle = _.assign({}, this.props.buttonStyle, styles.buttonText);
     return (
       <div
-        style={containerStyle}
+        style={styles.container}
         onClick={this.props.onClick}
       >
-        <div style={styles.buttonText}>
+        <div style={buttonStyle}>
           {this.props.title}
         </div>
       </div>

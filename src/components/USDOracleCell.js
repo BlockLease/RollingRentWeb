@@ -27,46 +27,39 @@ type State = {
 export default class USDOracleCell extends Component<Props, State> {
 
   dispatchToken: string;
-  intervalToken: number;
 
   componentDidMount() {
     this.dispatchToken = Dispatcher.register(action => {
       nextTick(() => this.forceUpdate());
     });
-
-    const updateIfLoaded = () => {
-      if (this.props.oracleAddress) {
-        Dispatcher.dispatch({
-          type: Action.usdOracle.update,
-          data: {
-            oracleAddress: this.props.oracleAddress
-          }
-        });
-      }
-    };
-
-    this.intervalToken = setSafeInterval(updateIfLoaded, 10000);
-    updateIfLoaded();
+    if (this.props.oracleAddress) {
+      Dispatcher.dispatch({
+        type: Action.usdOracle.update,
+        data: {
+          oracleAddress: this.props.oracleAddress
+        }
+      });
+    }
   }
 
   componentWillUnmount() {
     Dispatcher.unregister(this.dispatchToken);
-    clearInterval(this.intervalToken);
   }
 
   isPriceValid(): boolean {
-    console.log(USDOracleStore.priceNeedsUpdate);
     return !USDOracleStore.priceNeedsUpdate;
   }
 
   render() {
     const contractUrl = EtherscanURL(this.props.oracleAddress);
-    const cellButtonStyle = {
-      backgroundColor: this.isPriceValid() ? 'green' : 'red'
+    const cellButtonStyle = this.isPriceValid() ? {
+      backgroundColor: 'green'
+    } : {
+      backgroundColor: 'red'
     };
     const cellButtonText = this.isPriceValid()
-      ? 'Price expired, click to update'
-      : `Price expires in ${USDOracleStore.expirationMoment().fromNow(true)}`;
+      ? `Price expires in ${USDOracleStore.expirationMoment().fromNow(true)}`
+      : 'Price expired, click to update';
     return (
       <div style={styles.container}>
         <h2>
@@ -80,7 +73,7 @@ export default class USDOracleCell extends Component<Props, State> {
         </h3>
         <div style={styles.buttonContainer}>
           <CellButton
-            style={cellButtonStyle}
+            buttonStyle={cellButtonStyle}
             onClick={() => {
               Dispatcher.dispatch({
                 type: Action.usdOracle.beginUpdate
