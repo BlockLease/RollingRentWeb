@@ -10,6 +10,9 @@ import UserStore from 'stores/User';
 import LeaseStore from 'stores/Lease';
 import LeaseCell from 'components/LeaseCell';
 import Footer from 'components/Footer';
+import { setSafeTimeout } from 'utils/SafeTime';
+import USDOracleCell from 'components/USDOracleCell';
+import USDOracleStore from 'stores/USDOracle';
 
 type Props = {
   leaseAddress: string
@@ -21,20 +24,9 @@ export default class Lease extends Component<Props, State> {
   dispatchToken: string;
 
   componentDidMount() {
-    this.dispatchToken = Dispatcher.register(action => {
-      setTimeout(() => this.forceUpdate(), 1);
-    });
-
-    Dispatcher.dispatch({
-      type: Action.lease.update,
-      data: {
-        leaseAddress: this.props.leaseAddress
-      }
-    });
   }
 
   componentWillUnmount() {
-    Dispatcher.unregister(this.dispatchToken);
   }
 
   render() {
@@ -43,6 +35,9 @@ export default class Lease extends Component<Props, State> {
         <Header />
         <div>
           <LeaseCell leaseAddress={this.props.leaseAddress} />
+        </div>
+        <div>
+          <USDOracleCell oracleAddress={USDOracleStore.oracleAddress} />
         </div>
         <Footer />
       </div>

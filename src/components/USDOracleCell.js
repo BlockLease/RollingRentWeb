@@ -34,17 +34,18 @@ export default class USDOracleCell extends Component<Props, State> {
           oracleContract: new UserStore.web3.eth.Contract(USDOracleABI, this.props.oracleAddress)
         });
       } else {
-        setTimeout(() => this.forceUpdate(), 1);
+        this.forceUpdate();
       }
     });
 
-    if (this.props.oracleAddress)
-    Dispatcher.dispatch({
-      type: Action.usdOracle.update,
-      data: {
-        oracleAddress: this.props.oracleAddress
-      }
-    });
+    if (this.props.oracleAddress) {
+      Dispatcher.dispatch({
+        type: Action.usdOracle.update,
+        data: {
+          oracleAddress: this.props.oracleAddress
+        }
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -54,7 +55,6 @@ export default class USDOracleCell extends Component<Props, State> {
   render() {
     const contractUrl = EtherscanURL(this.props.oracleAddress);
     const lastUpdated = USDOracleStore.lastUpdated || 0;
-    console.log(lastUpdated);
     return (
       <div style={styles.container}>
         <h2>
@@ -78,7 +78,7 @@ export default class USDOracleCell extends Component<Props, State> {
               });
             }}
           >
-            Update Oracle ($1)
+            Update Oracle
           </button>
         </div>
       </div>

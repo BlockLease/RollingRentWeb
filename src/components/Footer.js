@@ -21,7 +21,7 @@ export default class Footer extends Component<Props, State> {
 
   componentDidMount() {
     this.dispatchToken = Dispatcher.register((payload: Action<any>) => {
-      setTimeout(() => this.forceUpdate(), 1);
+      this.forceUpdate();
     });
   }
 
