@@ -99,7 +99,7 @@ class LeaseStore extends Store {
           payload.data.tenantAddress,
           payload.data.leaseStartTime,
           payload.data.leaseCycleTime,
-          payload.data.rentPriceUsd,
+          payload.data.leaseCyclePriceUsd,
           payload.data.minCycleCount
         ]
       });

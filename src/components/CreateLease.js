@@ -78,7 +78,7 @@ export default class Lease extends Component<Props, State> {
         tenantAddress: this.state.tenantAddress,
         leaseStartTime: moment(this.state.startDate).unix(),
         leaseCycleTime: 60 * 60 * 24 * this.state.cycleTimeDays,
-        rentPriceUsd: this.state.rentPriceUsd,
+        leaseCyclePriceUsd: this.state.rentPriceUsd,
         minCycleCount: this.state.minCycleCount
       }
     });
