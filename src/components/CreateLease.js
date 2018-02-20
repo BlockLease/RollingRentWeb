@@ -46,7 +46,20 @@ export default class Lease extends Component<Props, State> {
 
   componentDidMount() {
     this.dispatchToken = Dispatcher.register(action => {
-      if (action.type === Action.lease.loaded) this.forceUpdate();
+      if (action.type === Action.lease.created) {
+        Promise.resolve().then(() => Dispatcher.dispatch({
+          type: Action.router.redirect,
+          data: {
+            path: `lease/${action.data._address}`
+          }
+        }));
+        this.setState({ deploying: false });
+      } else if (action.type === Action.lease.error) {
+        console.log('Error deploying', action.data);
+        this.setState({ deploying: false });
+      } else {
+        this.forceUpdate();
+      }
     });
   }
 
@@ -56,44 +69,20 @@ export default class Lease extends Component<Props, State> {
 
   handleSubmit(event: any) {
     event.preventDefault();
-    const _web3 = new Web3(UserStore.web3.currentProvider);
-    const lease = new _web3.eth.Contract(LeaseABI);
-    console.log(this.state.startDate);
-    const transaction = lease.deploy({
-      data: LeaseBytecode,
-      arguments: [
-        USDOracleStore.oracleAddress,
-        this.state.landlordAddress,
-        this.state.tenantAddress,
-        moment(this.state.startDate).unix(),
-        60 * 60 * 4,
-        this.state.rentPriceUsd,
-        this.state.minCycleCount
-      ]
+    Dispatcher.dispatch({
+      type: Action.lease.create,
+      data: {
+        landlordAddress: this.state.landlordAddress,
+        tenantAddress: this.state.tenantAddress,
+        leaseStartTime: moment(this.state.startDate).unix(),
+        leaseCycleTime: 60 * 60 * 4,
+        rentPriceUsd: this.state.rentPriceUsd,
+        minCycleCount: this.state.minCycleCount
+      }
     });
     this.setState({
       deploying: true
     });
-    transaction.estimateGas()
-      .then(gas => transaction.send({
-        from: UserStore.activeAccount,
-        gas
-      }))
-      .then(contract => {
-        console.log('done', contract);
-        Dispatcher.dispatch({
-          type: Action.router.redirect,
-          data: {
-            path: `lease/${contract._address}`
-          }
-        });
-      })
-      .catch(err => {
-        console.log('err', err);
-        this.setState({
-          deploying: false
-        });
-      });
   }
 
   render() {

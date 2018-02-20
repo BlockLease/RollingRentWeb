@@ -25,7 +25,9 @@ Action.lease = {
   loaded: 'lease.loaded',
   update: 'lease.update',
   create: 'lease.create',
-  payRent: 'lease.payRent'
+  payRent: 'lease.payRent',
+  created: 'lease.created',
+  error: 'lease.error'
 };
 
 Action.usdOracle = {

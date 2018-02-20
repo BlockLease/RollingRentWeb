@@ -9,6 +9,7 @@ import Dispatcher from 'src/Dispatcher';
 import Action from 'src/Action';
 import EtherscanURL from 'utils/EtherscanURL';
 import USDOracleStore from 'stores/USDOracle';
+import LeaseStore from 'stores/Lease';
 
 type Props = {};
 type State = {
@@ -70,6 +71,41 @@ export default class Header extends Component<Props, State> {
             Update Price
           </button>
         </div>
+        <div>
+          <button
+            style={styles.headerButton}
+            onClick={() => Dispatcher.dispatch({
+              type: Action.router.redirect,
+              data: {
+                path: 'lease'
+              }
+            })}
+          >
+            Deploy Contract
+          </button>
+          <button
+            style={styles.headerButton}
+            onClick={() => Dispatcher.dispatch({
+              type: Action.router.redirect,
+              data: {
+                path: `lease/${LeaseStore.sampleContractAddress()}`
+              }
+            })}
+          >
+            Sample Lease
+          </button>
+          <button
+            style={styles.headerButton}
+            onClick={() => Dispatcher.dispatch({
+              type: Action.router.redirect,
+              data: {
+                path: `oracle`
+              }
+            })}
+          >
+            USD Oracle
+          </button>
+        </div>
       </div>
     );
   }
@@ -83,7 +119,7 @@ const styles = {
     right: 0,
     padding: 4,
     margin: 0,
-    height: 50,
+    height: 70,
     backgroundColor: 'black',
     color: 'white',
     justifyContent: 'space-between',
@@ -96,5 +132,8 @@ const styles = {
   link: {
     color: 'white',
     padding: 4
+  },
+  headerButton: {
+    margin: 4
   }
 };

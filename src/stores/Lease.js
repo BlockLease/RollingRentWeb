@@ -10,6 +10,7 @@ import Promisify from 'utils/Promisify';
 import UserStore from 'stores/User';
 import _ from 'lodash';
 import LeaseABI from 'utils/LeaseABI';
+import LeaseBytecode from 'utils/LeaseBytecode';
 import USDOracleStore from 'stores/USDOracle';
 
 // Injected web3
@@ -30,6 +31,16 @@ class LeaseStore extends Store {
 
   tenantAddress: string;
   landlordAddress: string;
+
+  sampleContractAddress(): string {
+    if (UserStore.networkId === 1) {
+      return '';
+    } else if (UserStore.networkId === 4) {
+      return '0x7E703A76319ac4ac8CbcbFe7E19c7b2307bD37f0';
+    } else {
+      throw new Error('Unknown network');
+    }
+  }
 
   __onDispatch(payload: Action<any>): void {
     if (payload.type === Action.lease.loaded) {
@@ -77,15 +88,38 @@ class LeaseStore extends Store {
       console.assert(payload.data.leaseCyclePriceUsd, 'No leaseCyclePriceUsd supplied');
       console.assert(payload.data.leaseStartTime, 'No leaseStartTime supplied');
       console.assert(payload.data.leaseCycleTime, 'No leaseCycleTime supplied');
-      const _web3 = new Web3(web3.currentProvider);
-      const lease = new _web3.eth.Contract(LeaseABI, {
-        from: UserStore.activeAccount,
-        data: LeaseStore.leaseBytecode
+      console.assert(payload.data.rentPriceUsd, 'No rentPriceUsd supplied');
+      const _web3 = new Web3(UserStore.web3.currentProvider);
+      const lease = new _web3.eth.Contract(LeaseABI);
+      const transaction = lease.deploy({
+        data: LeaseBytecode,
+        arguments: [
+          USDOracleStore.oracleAddress,
+          payload.data.landlordAddress,
+          payload.data.tenantAddress,
+          payload.data.leaseStartTime,
+          payload.data.leaseCycleTime,
+          payload.data.rentPriceUsd,
+          payload.data.minCycleCount
+        ]
       });
-      //
-      // lease.deploy([
-      //
-      // ])
+      transaction.estimateGas()
+        .then((gas: number) => transaction.send({
+          from: UserStore.activeAccount,
+          gas
+        }))
+        .then(contract => {
+          Dispatcher.dispatch({
+            type: Action.lease.created,
+            data: contract
+          });
+        })
+        .catch(err => {
+          Dispatcher.dispatch({
+            type: Action.lease.error,
+            data: err
+          });
+        });
     } else if (payload.type === Action.lease.payRent) {
       const _web3 = new Web3(web3.currentProvider);
       const leaseContract = new _web3.eth.Contract(LeaseABI, this.leaseAddress);
