@@ -18,6 +18,7 @@ import Footer from 'components/Footer';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import CreateLeaseCell from 'components/CreateLeaseCell';
+import SharedStyles from 'src/SharedStyles';
 
 type Props = { };
 type State = { };
@@ -39,7 +40,7 @@ export default class CreateLease extends Component<Props, State> {
 
   render() {
     return (
-      <div style={styles.container}>
+      <div style={SharedStyles.container}>
         <Header />
         <CreateLeaseCell />
         <Footer />
@@ -49,17 +50,4 @@ export default class CreateLease extends Component<Props, State> {
 }
 
 const styles = {
-  container: {
-    margin: 'auto',
-    width: '100%',
-    textAlign: 'center'
-  },
-  textInput: {
-    margin: 4,
-    width: '30%'
-  },
-  dateInput: {
-    margin: 4,
-    display: 'inline-block'
-  }
 };

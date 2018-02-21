@@ -18,6 +18,7 @@ import Footer from 'components/Footer';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { nextTick } from 'utils/SafeTime';
+import SharedStyles from 'src/SharedStyles';
 
 type Props = { };
 type State = {
@@ -92,7 +93,7 @@ export default class CreateLeaseCell extends Component<Props, State> {
 
   render() {
     return (
-      <div style={styles.container}>
+      <div style={SharedStyles.cellContainer}>
         <h2>Create a lease</h2>
         <form
           onSubmit={_.bind(this.handleSubmit, this)}

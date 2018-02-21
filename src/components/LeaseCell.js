@@ -18,6 +18,7 @@ import { nextTick } from 'utils/SafeTime';
 import CellButton from 'components/CellButton';
 import InactiveLeaseCell from 'components/InactiveLeaseCell';
 import ActiveLeaseCell from 'components/ActiveLeaseCell';
+import SharedStyles from 'src/SharedStyles';
 
 type Props = {
   leaseAddress: string
@@ -58,7 +59,7 @@ export default class LeaseCell extends Component<Props, State> {
     const leaseBeginString = LeaseStore.leaseStartMoment().fromNow(true);
 
     return (
-      <div style={styles.container}>
+      <div style={SharedStyles.cellContainer}>
         <h2>
           Lease Contract:&nbsp;
           <a href={contractUrl} target='_blank' style={styles.link}>
@@ -93,14 +94,6 @@ export default class LeaseCell extends Component<Props, State> {
 }
 
 const styles = {
-  container: {
-    margin: 'auto',
-    padding: 8,
-    textAlign: 'center',
-    border: '2px solid #000',
-    margin: 8,
-    borderRadius: 20
-  },
   link: {
     color: 'black'
   },

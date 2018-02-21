@@ -14,6 +14,7 @@ import { setSafeTimeout } from 'utils/SafeTime';
 import USDOracleCell from 'components/USDOracleCell';
 import USDOracleStore from 'stores/USDOracle';
 import InactiveLeaseCell from 'components/InactiveLeaseCell';
+import SharedStyles from 'src/SharedStyles';
 
 type Props = {
   leaseAddress: string
@@ -32,7 +33,7 @@ export default class Lease extends Component<Props, State> {
 
   render() {
     return (
-      <div style={styles.container}>
+      <div style={SharedStyles.container}>
         <Header />
         <div>
           <LeaseCell leaseAddress={this.props.leaseAddress} />
@@ -47,9 +48,4 @@ export default class Lease extends Component<Props, State> {
 }
 
 const styles = {
-  container: {
-    margin: 'auto',
-    width: '100%',
-    textAlign: 'center'
-  }
 };

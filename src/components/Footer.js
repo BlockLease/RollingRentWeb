@@ -42,14 +42,17 @@ export default class Footer extends Component<Props, State> {
 
   render() {
     return (
-      <div style={styles.container}>
-        <a href='https://github.com/BlockLease' target='_blank'>
-          <img
-            src='/GitHub-Mark-Light-64px.png'
-            width={32}
-            height={32}
-          />
-        </a>
+      <div>
+        <div style={{height: 80}} />
+        <div style={styles.container}>
+          <a href='https://github.com/BlockLease' target='_blank'>
+            <img
+              src='/GitHub-Mark-Light-64px.png'
+              width={32}
+              height={32}
+            />
+          </a>
+        </div>
       </div>
     );
   }

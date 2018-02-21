@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
+import SharedStyles from 'src/SharedStyles';
 
 type Props = { };
 type State = { };
@@ -12,7 +13,7 @@ type State = { };
 export default class DownloadMM extends Component<Props, State> {
   render() {
     return (
-      <div style={styles.container}>
+      <div style={SharedStyles.container}>
         <Header />
         <p>This website requires the metamask browser extension. Visit the link below to install and then return to this page.</p>
         <a href="https://metamask.io/" target="_blank">
@@ -25,9 +26,4 @@ export default class DownloadMM extends Component<Props, State> {
 }
 
 const styles = {
-  container: {
-    margin: 'auto',
-    width: '100%',
-    textAlign: 'center'
-  }
 };
