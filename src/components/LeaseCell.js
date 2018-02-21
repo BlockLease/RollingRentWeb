@@ -15,13 +15,12 @@ import moment from 'moment';
 import USDOracleStore from 'stores/USDOracle';
 import EtherscanURL from 'utils/EtherscanURL';
 import { nextTick } from 'utils/SafeTime';
+import CellButton from 'components/CellButton';
 
 type Props = {
   leaseAddress: string
 };
-type State = {
-  leaseContract: Web3.Contract
-};
+type State = {};
 
 export default class LeaseCell extends Component<Props, State> {
 
@@ -29,13 +28,7 @@ export default class LeaseCell extends Component<Props, State> {
 
   componentDidMount() {
     this.dispatchToken = Dispatcher.register(action => {
-      if (UserStore.web3) {
-        this.setState({
-          leaseContract: new UserStore.web3.eth.Contract(LeaseABI, this.props.leaseAddress)
-        });
-      } else {
-        nextTick(() => this.forceUpdate());
-      }
+      nextTick(() => this.forceUpdate());
     });
 
     Dispatcher.dispatch({
@@ -52,12 +45,16 @@ export default class LeaseCell extends Component<Props, State> {
 
   render() {
     const contractUrl = EtherscanURL(this.props.leaseAddress);
+    const landlordUrl = EtherscanURL(LeaseStore.landlordAddress);
+    const tenantUrl = EtherscanURL(LeaseStore.tenantAddress);
 
     const usdEthPrice = +USDOracleStore.price / 100;
     const contractBalanceEth = UserStore.web3.utils.fromWei(LeaseStore.contractBalanceWei || '0');
     const landlordBalanceEth = UserStore.web3.utils.fromWei(LeaseStore.landlordBalanceWei || '0');
     const rentOwedEth = UserStore.web3.utils.fromWei(LeaseStore.rentOwedWei || '0');
     const rentPriceUsd = LeaseStore.rentPrice || '0';
+    console.log(LeaseStore);
+    const leaseBeginString = LeaseStore.leaseStartMoment().fromNow(true);
 
     return (
       <div style={styles.container}>
@@ -71,26 +68,29 @@ export default class LeaseCell extends Component<Props, State> {
           Status: {LeaseStore.signed ? 'Active' : 'Awaiting signatures'}
         </h3>
         <div>
-          landlord: {LeaseStore.landlordAddress}
+          Landlord:&nbsp;
+          <a href={landlordUrl} target='_blank' style={styles.link}>
+            {LeaseStore.landlordAddress}
+          </a>
         </div>
         <div>
-          tenant: {LeaseStore.tenantAddress}
+          Tenant:&nbsp;
+          <a href={tenantUrl} target='_blank' style={styles.link}>
+            {LeaseStore.tenantAddress}
+          </a>
         </div>
         <div>
-          lease start date: {moment.unix(LeaseStore.leaseStartTime).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+          Lease begins in {leaseBeginString}
         </div>
         <div>
-          lease cycle length: {LeaseStore.leaseCycleTime}
+          Lease cycle length: {LeaseStore.leaseCycleTime} seconds
         </div>
         <div>
-          rent price: ${rentPriceUsd} = {+rentPriceUsd / usdEthPrice} eth
+          Rent price: ${rentPriceUsd} = {+rentPriceUsd / usdEthPrice} eth
         </div>
         <br />
         <div>
-          contract balance: {contractBalanceEth} = ${contractBalanceEth * usdEthPrice}
-        </div>
-        <div>
-          rent owed: {rentOwedEth} = ${rentOwedEth * usdEthPrice}
+          Contract balance: {contractBalanceEth} = ${contractBalanceEth * usdEthPrice}
         </div>
         <br />
         <div>
@@ -107,15 +107,10 @@ export default class LeaseCell extends Component<Props, State> {
         <div style={{padding: 4}}>
           <button
             onClick={() => {
-              Promisify(this.state.leaseContract.methods.sign(), 'send', {
-                from: UserStore.activeAccount
-              })
-                .then(() => Dispatcher.dispatch({
-                  type: Action.lease.update,
-                  data: {
-                    leaseAddress: this.props.leaseAddress
-                  }
-                }));
+              Dispatcher.dispatch({
+                type: Action.lease.sign,
+                data: {}
+              });
             }}
             style={{
               display: LeaseStore.signed ? 'none' : undefined
@@ -124,10 +119,12 @@ export default class LeaseCell extends Component<Props, State> {
             Sign
           </button>
           <button
-            onClick={() => Dispatcher.dispatch({
-              type: Action.lease.payRent,
-              data: {}
-            })}
+            onClick={() => {
+              Dispatcher.dispatch({
+                type: Action.lease.payRent,
+                data: {}
+              })
+            }}
             style={{
               display: LeaseStore.signed ? undefined : 'none'
             }}
@@ -151,5 +148,11 @@ const styles = {
   },
   link: {
     color: 'black'
+  },
+  address: {
+    width: 20,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
   }
 };

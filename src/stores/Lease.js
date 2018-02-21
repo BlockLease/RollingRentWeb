@@ -12,6 +12,7 @@ import _ from 'lodash';
 import LeaseABI from 'utils/LeaseABI';
 import LeaseBytecode from 'utils/LeaseBytecode';
 import USDOracleStore from 'stores/USDOracle';
+import moment from 'moment';
 
 // Injected web3
 declare var web3: Web3;
@@ -28,6 +29,8 @@ class LeaseStore extends Store {
   currentCycle: string;
   signed: boolean;
   rentOwedWei: string;
+  landlordSigned: boolean;
+  tenantSigned: boolean;
 
   tenantAddress: string;
   landlordAddress: string;
@@ -42,26 +45,35 @@ class LeaseStore extends Store {
     }
   }
 
+  leaseStartMoment(): moment {
+    return moment.unix(+this.leaseStartTime || 0);
+  }
+
+  leaseContract(address?: string): Web3.Contract {
+    return new UserStore.web3.eth.Contract(LeaseABI, address || this.leaseAddress);
+  }
+
   __onDispatch(payload: Action<any>): void {
     if (payload.type === Action.lease.loaded) {
       _.assign(this, payload.data);
     } else if (payload.type === Action.lease.update) {
       console.assert(payload.data.leaseAddress, 'No lease address supplied to load');
-      console.assert(web3, 'No web3 found');
-      const _web3 = new Web3(web3.currentProvider);
-      const leaseContract = new _web3.eth.Contract(LeaseABI, payload.data.leaseAddress);
+      console.assert(UserStore.web3, 'No web3 found');
+      const leaseContract = this.leaseContract(payload.data.leaseAddress);
       Promise.all([
         Promisify(leaseContract.methods.startTime(), 'call'),
         Promisify(leaseContract.methods.cycleTime(), 'call'),
         Promisify(leaseContract.methods.landlordBalance(), 'call'),
-        _web3.eth.getBalance(payload.data.leaseAddress),
+        UserStore.web3.eth.getBalance(payload.data.leaseAddress),
         Promisify(leaseContract.methods.cyclePriceUsd(), 'call'),
         Promisify(leaseContract.methods.usdOracle(), 'call'),
         Promisify(leaseContract.methods.landlord(), 'call'),
         Promisify(leaseContract.methods.tenant(), 'call'),
         Promisify(leaseContract.methods.leaseCycle(), 'call'),
         Promisify(leaseContract.methods.signed(), 'call'),
-        Promisify(leaseContract.methods.rentOwed(), 'call')
+        Promisify(leaseContract.methods.rentOwed(), 'call'),
+        Promisify(leaseContract.methods.tenantSigned(), 'call'),
+        Promisify(leaseContract.methods.landlordSigned(), 'call')
       ])
         .then((results: any[]) => {
           Dispatcher.dispatch({
@@ -78,7 +90,9 @@ class LeaseStore extends Store {
               tenantAddress: results[7],
               currentCycle: results[8],
               signed: results[9],
-              rentOwedWei: results[10]
+              rentOwedWei: results[10],
+              tenantSigned: results[11],
+              landlordSigned: results[12]
             }
           });
         });
@@ -88,8 +102,7 @@ class LeaseStore extends Store {
       console.assert(payload.data.leaseCyclePriceUsd, 'No leaseCyclePriceUsd supplied');
       console.assert(payload.data.leaseStartTime, 'No leaseStartTime supplied');
       console.assert(payload.data.leaseCycleTime, 'No leaseCycleTime supplied');
-      const _web3 = new Web3(UserStore.web3.currentProvider);
-      const lease = new _web3.eth.Contract(LeaseABI);
+      const lease = new UserStore.web3.eth.Contract(LeaseABI);
       const transaction = lease.deploy({
         data: LeaseBytecode,
         arguments: [
@@ -120,9 +133,7 @@ class LeaseStore extends Store {
           });
         });
     } else if (payload.type === Action.lease.payRent) {
-      const _web3 = new Web3(web3.currentProvider);
-      const leaseContract = new _web3.eth.Contract(LeaseABI, this.leaseAddress);
-      Promisify(leaseContract.methods.payRent(), 'send', {
+      Promisify(this.leaseContract().methods.payRent(), 'send', {
         from: UserStore.activeAccount,
         value: this.rentOwedWei
       })
@@ -131,6 +142,20 @@ class LeaseStore extends Store {
           data: {
             leaseAddress: this.leaseAddress
           }
+        }));
+    } else if (payload.type === Action.lease.sign) {
+      Promisify(this.leaseContract().methods.sign(), 'send', {
+        from: UserStore.activeAccount
+      })
+        .then(() => Dispatcher.dispatch({
+          type: Action.lease.update,
+          data: {
+            leaseAddress: this.leaseAddress
+          }
+        }))
+        .catch(err => Dispatcher.dispatch({
+          type: Action.lease.error,
+          data: err
         }));
     }
   }

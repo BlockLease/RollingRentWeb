@@ -27,7 +27,8 @@ Action.lease = {
   create: 'lease.create',
   payRent: 'lease.payRent',
   created: 'lease.created',
-  error: 'lease.error'
+  error: 'lease.error',
+  sign: 'lease.sign'
 };
 
 Action.usdOracle = {
