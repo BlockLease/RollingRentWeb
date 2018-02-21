@@ -13,6 +13,7 @@ import Footer from 'components/Footer';
 import { setSafeTimeout } from 'utils/SafeTime';
 import USDOracleCell from 'components/USDOracleCell';
 import USDOracleStore from 'stores/USDOracle';
+import InactiveLeaseCell from 'components/InactiveLeaseCell';
 
 type Props = {
   leaseAddress: string

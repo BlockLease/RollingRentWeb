@@ -41,8 +41,6 @@ export default class Footer extends Component<Props, State> {
   }
 
   render() {
-    const etherscanUrl = EtherscanURL(UserStore.activeAccount);
-    const gdaxUrl = 'https://www.gdax.com/trade/ETH-USD';
     return (
       <div style={styles.container}>
         <a href='https://github.com/BlockLease' target='_blank'>

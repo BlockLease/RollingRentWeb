@@ -16,15 +16,13 @@ import USDOracleStore from 'stores/USDOracle';
 import EtherscanURL from 'utils/EtherscanURL';
 import { nextTick } from 'utils/SafeTime';
 import CellButton from 'components/CellButton';
-import InactiveLeaseCell from 'components/InactiveLeaseCell';
-import ActiveLeaseCell from 'components/ActiveLeaseCell';
 
 type Props = {
   leaseAddress: string
 };
 type State = {};
 
-export default class LeaseCell extends Component<Props, State> {
+export default class InactiveLeaseCell extends Component<Props, State> {
 
   dispatchToken: string;
 
@@ -59,34 +57,33 @@ export default class LeaseCell extends Component<Props, State> {
 
     return (
       <div style={styles.container}>
-        <h2>
-          Lease Contract:&nbsp;
-          <a href={contractUrl} target='_blank' style={styles.link}>
-            {this.props.leaseAddress}
-          </a>
-        </h2>
-        <h3>
-          Landlord:&nbsp;
-          <a href={landlordUrl} target='_blank' style={styles.link}>
-            {LeaseStore.landlordAddress}
-          </a>
-        </h3>
-        <h3>
-          Tenant:&nbsp;
-          <a href={tenantUrl} target='_blank' style={styles.link}>
-            {LeaseStore.tenantAddress}
-          </a>
-        </h3>
-        <h3>
-          Status: {LeaseStore.signed ? 'Active' : 'Awaiting signatures'}
-        </h3>
-        {(() => {
-          if (LeaseStore.signed) {
-            return <ActiveLeaseCell leaseAddress={this.props.leaseAddress} />
-          } else {
-            return <InactiveLeaseCell leaseAddress={this.props.leaseAddress} />
-          }
-        })()}
+        <div>
+          Lease is active.
+        </div>
+        <div>
+          <h3>
+            {(() => {
+              if (UserStore.activeAccount === LeaseStore.tenantAddress) {
+                return 'You are the tenant on this lease';
+              } else if (UserStore.activeAccount === LeaseStore.landlordAddress) {
+                return 'You are the landlord on this lease';
+              }
+            })()}
+          </h3>
+        </div>
+        <button
+          onClick={() => {
+            Dispatcher.dispatch({
+              type: Action.lease.payRent,
+              data: {}
+            })
+          }}
+          style={{
+            display: LeaseStore.signed ? undefined : 'none'
+          }}
+        >
+          Pay Rent
+        </button>
       </div>
     );
   }
@@ -94,12 +91,6 @@ export default class LeaseCell extends Component<Props, State> {
 
 const styles = {
   container: {
-    margin: 'auto',
-    padding: 8,
-    textAlign: 'center',
-    border: '2px solid #000',
-    margin: 8,
-    borderRadius: 20
   },
   link: {
     color: 'black'

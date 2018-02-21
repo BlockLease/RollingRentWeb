@@ -31,6 +31,7 @@ class LeaseStore extends Store {
   rentOwedWei: string;
   landlordSigned: boolean;
   tenantSigned: boolean;
+  minCycleCount: string;
 
   tenantAddress: string;
   landlordAddress: string;
@@ -73,7 +74,8 @@ class LeaseStore extends Store {
         Promisify(leaseContract.methods.signed(), 'call'),
         Promisify(leaseContract.methods.rentOwed(), 'call'),
         Promisify(leaseContract.methods.tenantSigned(), 'call'),
-        Promisify(leaseContract.methods.landlordSigned(), 'call')
+        Promisify(leaseContract.methods.landlordSigned(), 'call'),
+        Promisify(leaseContract.methods.minCycleCount(), 'call')
       ])
         .then((results: any[]) => {
           Dispatcher.dispatch({
@@ -92,7 +94,8 @@ class LeaseStore extends Store {
               signed: results[9],
               rentOwedWei: results[10],
               tenantSigned: results[11],
-              landlordSigned: results[12]
+              landlordSigned: results[12],
+              minCycleCount: results[13]
             }
           });
         });
