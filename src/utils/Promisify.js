@@ -2,7 +2,7 @@
 
 // @flow
 
-export default async function Promisify(binding: any, fn: string, ...args: any[]): Promise<any> {
+export default function Promisify(binding: any, fn: string, ...args: any[]): Promise<any> {
   return new Promise((rs, rj) => {
     if (typeof binding[fn] !== 'function') return rj(new Error('Invalid function name supplied'));
     args.push((err, res) => {
