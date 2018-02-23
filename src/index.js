@@ -98,3 +98,5 @@ const loadingToken = setInterval(() => {
     }
   });
 }, 500);
+
+clearInterval(loadingToken);
