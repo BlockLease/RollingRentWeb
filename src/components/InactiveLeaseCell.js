@@ -71,7 +71,9 @@ export default class InactiveLeaseCell extends Component<Props, State> {
           After the minimum cycle time has passed the contract may be terminated by the tenant by supplying the current cycle of rent plus an additional cycle of rent. Tenant must call terminate at least 1 cycle before termination of payment.
           <br /><br />
           <h3>Landlord Termination</h3>
-          After the minimum cycle time has passed
+          After the minimum cycle time has passed the contract may be terminated by the landlord. Upon cancellation the contract will end at the end of the current cycle, plus one cycle.
+          <br /><br />
+          <h3>Current Holdings</h3>
           There is currently a balance of {contractBalanceEth} Eth (${contractBalanceEth * usdEthPrice}) in the contract.
         </div>
         <div>
@@ -84,6 +86,16 @@ export default class InactiveLeaseCell extends Component<Props, State> {
               }
             })()}
           </h3>
+        </div>
+        <div style={{margin: 8}}>
+          <span style={LeaseStore.landlordSigned ? styles.signed : styles.unsigned}>
+            {LeaseStore.landlordSigned ? 'Landlord has signed.' : 'Landlord has not signed.'}
+          </span>
+        </div>
+        <div style={{margin: 8}}>
+          <span style={LeaseStore.tenantSigned ? styles.signed : styles.unsigned}>
+            {LeaseStore.tenantSigned ? 'Tenant has signed.' : 'Tenant has not signed.'}
+          </span>
         </div>
         <div style={{padding: 4}}>
           <button
@@ -107,6 +119,18 @@ export default class InactiveLeaseCell extends Component<Props, State> {
 
 const styles = {
   container: {
+  },
+  signed: {
+    padding: 4,
+    margin: 4,
+    color: 'white',
+    backgroundColor: 'green'
+  },
+  unsigned: {
+    padding: 4,
+    margin: 4,
+    color: 'white',
+    backgroundColor: 'red'
   },
   link: {
     color: 'black'
