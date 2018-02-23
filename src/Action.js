@@ -6,6 +6,7 @@ export default class Action<T> {
   type: string;
   data: T;
 
+  static initialize;
   static router;
   static user;
   static lease;

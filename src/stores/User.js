@@ -8,6 +8,7 @@ import Action from 'src/Action';
 import Web3 from 'web3';
 import Promisify from 'utils/Promisify';
 import _ from 'lodash';
+import { nextTick } from 'utils/SafeTime';
 
 // Injected web3
 declare var web3: Web3;
@@ -21,22 +22,22 @@ class UserStore extends Store {
   __onDispatch(payload: Action<any>): void {
     if (payload.type === Action.user.loaded) {
       _.assign(this, payload.data);
+      console.assert(this.web3, 'No web3 present on UserStore');
     } else if (payload.type === Action.user.update) {
-      const _web3 = new Web3(web3.currentProvider);
-      this.web3 = _web3;
       Promise.all([
-        Promisify(_web3.eth, 'getAccounts'),
-        Promisify(_web3.eth.net, 'getId')
+        Promisify(this.web3.eth, 'getAccounts'),
+        Promisify(this.web3.eth.net, 'getId')
       ])
         .then((results: any[]) => {
-          const accounts = results[0];
+          const activeAccount = results[0][0];
           const networkId = results[1];
-          const activeAccount = accounts[0];
           Dispatcher.dispatch({
             type: Action.user.loaded,
-            data: { networkId, activeAccount, web3: _web3}
+            data: { networkId, activeAccount, web3: this.web3}
           });
         });
+    } else if (payload.type === Action.initialize) {
+      this.web3 = new Web3(web3.currentProvider);
     }
   }
 }

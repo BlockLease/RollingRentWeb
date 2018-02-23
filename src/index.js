@@ -15,6 +15,7 @@ import Action from 'src/Action';
 import Lease from 'components/Lease';
 import UserStore from 'stores/User';
 import USDOracleStore from 'stores/USDOracle';
+import { nextTick } from 'utils/SafeTime';
 
 // Injected web3
 declare var web3: Web3;
@@ -55,41 +56,45 @@ Dispatcher.register((payload: Action<any>) => {
 const loadingToken = setInterval(() => {
   if (document.readyState !== 'complete') return;
   clearInterval(loadingToken);
-
-  Promise.resolve()
-    .then(() => {
-      const loadingOverlay = document.getElementById('loading-overlay');
+  /**
+   * Defer execution to avoid warnings about long setInterval callback times
+   **/
+  nextTick(() => {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    // $FlowFixMe
+    loadingOverlay.style.opacity = 0;
+    setTimeout(() => Promise.resolve().then(() => {
       // $FlowFixMe
-      loadingOverlay.style.opacity = 0;
-      setTimeout(() => Promise.resolve().then(() => {
-        // $FlowFixMe
-        document.body.removeChild(loadingOverlay);
-        Dispatcher.dispatch({
-          type: Action.router.redirect,
-          data: {
-            path: window.location.hash
-          }
-        });
-      }), 1000);
+      document.body.removeChild(loadingOverlay);
+      Dispatcher.dispatch({
+        type: Action.router.redirect,
+        data: {
+          path: window.location.hash
+        }
+      });
+    }), 1000);
 
-      if (typeof web3 === 'undefined') {
-        // Metamask not injected
-        Dispatcher.dispatch({
-          type: Action.router.redirect,
-          data: {
-            path: 'downloadmm'
-          }
-        });
-      } else {
-        Dispatcher.dispatch({
-          type: Action.user.update
-        });
-        Dispatcher.dispatch({
-          type: Action.router.redirect,
-          data: {
-            path: window.location.hash
-          }
-        });
-      }
-    });
+    if (typeof web3 === 'undefined') {
+      // Metamask not injected
+      Dispatcher.dispatch({
+        type: Action.router.redirect,
+        data: {
+          path: 'downloadmm'
+        }
+      });
+    } else {
+      Dispatcher.dispatch({
+        type: Action.initialize
+      });
+      Dispatcher.dispatch({
+        type: Action.user.update
+      });
+      Dispatcher.dispatch({
+        type: Action.router.redirect,
+        data: {
+          path: window.location.hash
+        }
+      });
+    }
+  });
 }, 500);
