@@ -61,6 +61,9 @@ const loadingToken = setInterval(() => {
    **/
   nextTick(() => {
     const loadingOverlay = document.getElementById('loading-overlay');
+    if (!loadingOverlay) {
+      console.log('Loading overlay element not found in document');
+    }
     // $FlowFixMe
     loadingOverlay.style.opacity = 0;
     setTimeout(() => Promise.resolve().then(() => {
@@ -98,5 +101,3 @@ const loadingToken = setInterval(() => {
     }
   });
 }, 500);
-
-clearInterval(loadingToken);
