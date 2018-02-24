@@ -40,7 +40,7 @@ class LeaseStore extends Store {
     if (UserStore.networkId === 1) {
       return '0x762b57e6a4ed578f3d79ce1fbd48da62ae357fe1';
     } else if (UserStore.networkId === 4) {
-      return '0x7E703A76319ac4ac8CbcbFe7E19c7b2307bD37f0';
+      return '0x9d0B3855F9165Ca37fF82D169c588bEF61835166';
     } else {
       throw new Error('Unknown network');
     }
