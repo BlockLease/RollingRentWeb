@@ -15,10 +15,10 @@ class IPFSStore extends Store {
   ipfsStore: { key: string };
 
   __onDispatch(payload: Action<any>): void {
-    if (payload.type === Action.initialize) {
-
-    } else if (payload.type === Action.ipfs.upload) {
+    if (payload.type === Action.ipfs.upload) {
+      console.log('beginning upload');
       IPFSStore.node.files.add(payload.data.buffer, (err, hash) => {
+        console.log(err, hash);
         if (err) return nextTick(() => Dispatcher.dispatch({
           type: Action.log.error,
           data: err
