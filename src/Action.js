@@ -11,6 +11,7 @@ export default class Action<T> {
   static user;
   static lease;
   static usdOracle;
+  static ipfs;
 }
 
 Action.router = {
@@ -36,4 +37,10 @@ Action.usdOracle = {
   loaded: 'usdOracle.loaded',
   update: 'usdOracle.update',
   beginUpdate: 'usdOracle.beginUpdate'
+};
+
+Action.ipfs = {
+  loaded: 'ipfs.loaded',
+  download: 'ipfs.download',
+  upload: 'ipfs.upload'
 };

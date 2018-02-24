@@ -15,6 +15,7 @@ import USDOracleCell from 'components/USDOracleCell';
 import USDOracleStore from 'stores/USDOracle';
 import InactiveLeaseCell from 'components/InactiveLeaseCell';
 import SharedStyles from 'src/SharedStyles';
+import IPFSUploader from 'components/IPFSUploader';
 
 type Props = {
   leaseAddress: string
@@ -25,18 +26,13 @@ export default class Lease extends Component<Props, State> {
 
   dispatchToken: string;
 
-  componentDidMount() {
-  }
-
-  componentWillUnmount() {
-  }
-
   render() {
     return (
       <div style={SharedStyles.container}>
         <Header />
         <div>
           <LeaseCell leaseAddress={this.props.leaseAddress} />
+          <IPFSUploader />
         </div>
         <div>
           <USDOracleCell oracleAddress={USDOracleStore.oracleAddress} />

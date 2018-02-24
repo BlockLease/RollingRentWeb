@@ -17,6 +17,8 @@ import UserStore from 'stores/User';
 import USDOracleStore from 'stores/USDOracle';
 import { nextTick } from 'utils/SafeTime';
 
+import IPFSStore from 'stores/IPFS';
+
 // Injected web3
 declare var web3: Web3;
 
