@@ -18,17 +18,29 @@ class IPFSStore extends Store {
     if (payload.type === Action.initialize) {
 
     } else if (payload.type === Action.ipfs.upload) {
-      IPFSStore.node.files.add(payload.data, (err, hash) => {
-
+      IPFSStore.node.files.add(payload.data.buffer, (err, hash) => {
+        if (err) return nextTick(() => Dispatcher.dispatch({
+          type: Action.log.error,
+          data: err
+        }));
+        nextTick(() => Dispatcher.dispatch({
+          type: Action.ipfs.uploaded,
+          data: {
+            name: payload.data.name,
+            hash
+          }
+        }));
       });
     }
   }
-  
+
 }
 
 IPFSStore.node = new IPFS();
 IPFSStore.node.on('ready', () => {
-  IPFSStore.node.files.add(new Buffer('Chance Hudson'), (err, hash) =>
-    console.log(err, hash));
+  Dispatcher.dispatch({
+    type: Action.log.message,
+    data: 'IPFS node initialized'
+  });
 });
 export default new IPFSStore(Dispatcher);

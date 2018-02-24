@@ -12,6 +12,7 @@ export default class Action<T> {
   static lease;
   static usdOracle;
   static ipfs;
+  static log;
 }
 
 Action.router = {
@@ -42,5 +43,12 @@ Action.usdOracle = {
 Action.ipfs = {
   loaded: 'ipfs.loaded',
   download: 'ipfs.download',
-  upload: 'ipfs.upload'
+  upload: 'ipfs.upload',
+  uploaded: 'ipfs.uploaded'
+};
+
+Action.log = {
+  message: 'log.message',
+  warning: 'log.warning',
+  error: 'log.error'
 };
