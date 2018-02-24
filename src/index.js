@@ -22,7 +22,7 @@ declare var web3: Web3;
 
 Dispatcher.register((payload: Action<any>) => {
   if (payload.type !== Action.router.redirect) return;
-  Promise.resolve().then(() => {
+  nextTick(() => {
     const path = payload.data.path.replace('#', '');
     window.location.hash = path;
     const pathComponents = path.split('/');
@@ -53,6 +53,9 @@ Dispatcher.register((payload: Action<any>) => {
   });
 });
 
+/**
+ * TODO: Clean up this recursive mess of a loading cycle
+ **/
 const loadingToken = setInterval(() => {
   if (document.readyState !== 'complete') return;
   clearInterval(loadingToken);
@@ -66,7 +69,14 @@ const loadingToken = setInterval(() => {
     }
     // $FlowFixMe
     loadingOverlay.style.opacity = 0;
-    setTimeout(() => Promise.resolve().then(() => {
+
+    /**
+     * Remove the loading element after the appropriate animation time
+     * It's currently set to 1 second (1000 ms)
+     *
+     * Also using nextTick to avoid the timer callback warning
+     **/
+    setTimeout(() => nextTick(() => {
       // $FlowFixMe
       document.body.removeChild(loadingOverlay);
       Dispatcher.dispatch({
