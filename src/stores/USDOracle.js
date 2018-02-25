@@ -33,9 +33,8 @@ class USDOracleStore extends Store {
     );
   }
 
-  constructor(dispatcher: any) {
-    super(dispatcher);
-    this.priceNeedsUpdate = true;
+  priceNeedsUpdate(): boolean {
+    return this.lastUpdatedMoment().seconds(60 * 60).valueOf() < moment().seconds(0).valueOf();
   }
 
   __onDispatch(payload: Action<any>): void {
@@ -55,7 +54,7 @@ class USDOracleStore extends Store {
           Dispatcher.dispatch({
             type: Action.usdOracle.update,
             data: {
-              oracleAddress: '0xf9c20540f181fecdb6c26941cf1499fe288e8244'
+              oracleAddress: '0xf01ea14414944c8ea8660526d8d9ec1d04962fca'
             }
           });
         });
@@ -71,7 +70,6 @@ class USDOracleStore extends Store {
       Promise.all([
         Promisify(oracleContract.methods.price(), 'call'),
         Promisify(oracleContract.methods.lastUpdated(), 'call'),
-        Promisify(oracleContract.methods.priceNeedsUpdate(), 'call')
       ])
         .then((results: any[]) => {
           Dispatcher.dispatch({
@@ -79,8 +77,7 @@ class USDOracleStore extends Store {
             data: {
               oracleAddress: payload.data.oracleAddress,
               price: results[0],
-              lastUpdated: results[1],
-              priceNeedsUpdate: results[2]
+              lastUpdated: results[1]
             }
           });
         });
