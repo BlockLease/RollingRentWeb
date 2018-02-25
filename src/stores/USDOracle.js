@@ -17,10 +17,7 @@ class USDOracleStore extends Store {
   static abi;
 
   price: string;
-  priceNeedsUpdate: boolean;
-  updateCost: string;
   lastUpdated: string;
-  priceExpirationInterval: string;
   oracleAddress: string;
 
   lastUpdatedMoment(): moment {
@@ -55,7 +52,7 @@ class USDOracleStore extends Store {
           Dispatcher.dispatch({
             type: Action.usdOracle.update,
             data: {
-              oracleAddress: '0xd15c88e2c2ca6756e4fdb73b75a1d5443f6c096d'
+              oracleAddress: '0xd77987d8fa15d35e709c75c2cc61c030c76d64fa'
             }
           });
         });
@@ -70,10 +67,8 @@ class USDOracleStore extends Store {
       const oracleContract = new _web3.eth.Contract(USDOracleABI, payload.data.oracleAddress);
       Promise.all([
         Promisify(oracleContract.methods.price(), 'call'),
-        Promisify(oracleContract.methods.priceNeedsUpdate(), 'call'),
-        Promisify(oracleContract.methods.updateCost(), 'call'),
         Promisify(oracleContract.methods.lastUpdated(), 'call'),
-        Promisify(oracleContract.methods.priceExpirationInterval(), 'call')
+        Promisify(oracleContract.methods.priceNeedsUpdate(), 'call')
       ])
         .then((results: any[]) => {
           Dispatcher.dispatch({
@@ -81,19 +76,15 @@ class USDOracleStore extends Store {
             data: {
               oracleAddress: payload.data.oracleAddress,
               price: results[0],
-              priceNeedsUpdate: results[1],
-              updateCost: results[2],
-              lastUpdated: results[3],
-              priceExpirationInterval: results[4]
+              lastUpdated: results[1],
+              priceNeedsUpdate: results[2]
             }
           });
         });
     } else if (payload.type === Action.usdOracle.beginUpdate) {
-      const _web3 = new Web3(UserStore.web3.currentProvider);
-      const oracleContract = new _web3.eth.Contract(USDOracleABI, this.oracleAddress);
-      Promisify(oracleContract.methods.update(), 'send', {
-        from: UserStore.activeAccount,
-        value: this.updateCost
+      const oracleContract = new UserStore.web3.eth.Contract(USDOracleABI, this.oracleAddress);
+      Promisify(oracleContract.methods.update(0), 'send', {
+        from: UserStore.activeAccount
       })
         .then(() => {
           Dispatcher.dispatch({
