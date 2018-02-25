@@ -46,20 +46,16 @@ export default class USDOracleCell extends Component<Props, State> {
     Dispatcher.unregister(this.dispatchToken);
   }
 
-  isPriceValid(): boolean {
-    return !USDOracleStore.priceNeedsUpdate;
-  }
-
   render() {
     const contractUrl = EtherscanURL(this.props.oracleAddress);
-    const cellButtonStyle = this.isPriceValid() ? {
-      backgroundColor: 'green'
-    } : {
+    const cellButtonStyle = USDOracleStore.priceNeedsUpdate() ? {
       backgroundColor: 'red'
+    } : {
+      backgroundColor: 'green'
     };
-    const cellButtonText = this.isPriceValid()
-      ? `Price expires in ${USDOracleStore.expirationMoment().fromNow(true)}`
-      : 'Price expired, click to update';
+    const cellButtonText = USDOracleStore.priceNeedsUpdate()
+      ? 'Price expired, click to update'
+      : `Price expires in ${USDOracleStore.expirationMoment().fromNow(true)}`;
     return (
       <div style={styles.container}>
         <h2>
