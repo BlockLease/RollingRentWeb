@@ -11,6 +11,7 @@ import UserStore from 'stores/User';
 import _ from 'lodash';
 import USDOracleABI from 'utils/USDOracleABI';
 import moment from 'moment'
+import { nextTick } from 'utils/SafeTime';
 
 const MAINNET_ID = 1;
 const RINKEBY_ID = 4;
@@ -41,7 +42,7 @@ class USDOracleStore extends Store {
     if (payload.type === Action.user.loaded) {
       const networkId = payload.data.networkId;
       if (networkId === MAINNET_ID) {
-        Promise.resolve().then(() => {
+        nextTick(() => {
           Dispatcher.dispatch({
             type: Action.usdOracle.update,
             data: {
@@ -50,7 +51,7 @@ class USDOracleStore extends Store {
           });
         });
       } else if (networkId === RINKEBY_ID) {
-        Promise.resolve().then(() => {
+        nextTick(() => {
           Dispatcher.dispatch({
             type: Action.usdOracle.update,
             data: {
