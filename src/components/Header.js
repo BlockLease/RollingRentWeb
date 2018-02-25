@@ -63,14 +63,6 @@ export default class Header extends Component<Props, State> {
           <a href={gdaxUrl} target='_blank' style={styles.link}>
             ${+USDOracleStore.price / 100 || '0'} / ETH
           </a>
-          <button onClick={() => {
-            Dispatcher.dispatch({
-              type: Action.usdOracle.beginUpdate,
-              data: {}
-            });
-          }}>
-            Update Price
-          </button>
         </div>
         <div>
           <button

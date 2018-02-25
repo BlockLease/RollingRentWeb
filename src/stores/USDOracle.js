@@ -11,16 +11,17 @@ import UserStore from 'stores/User';
 import _ from 'lodash';
 import USDOracleABI from 'utils/USDOracleABI';
 import moment from 'moment'
+import { nextTick } from 'utils/SafeTime';
+
+const MAINNET_ID = 1;
+const RINKEBY_ID = 4;
 
 class USDOracleStore extends Store {
 
   static abi;
 
   price: string;
-  priceNeedsUpdate: boolean;
-  updateCost: string;
   lastUpdated: string;
-  priceExpirationInterval: string;
   oracleAddress: string;
 
   lastUpdatedMoment(): moment {
@@ -29,20 +30,19 @@ class USDOracleStore extends Store {
 
   expirationMoment(): moment {
     return moment.unix(
-      (+this.lastUpdated || 0) + (+this.priceExpirationInterval || 0)
+      (+this.lastUpdated || 0) + 3600
     );
   }
 
-  constructor(dispatcher: any) {
-    super(dispatcher);
-    this.priceNeedsUpdate = true;
+  priceNeedsUpdate(): boolean {
+    return this.lastUpdatedMoment().seconds(60 * 60).valueOf() < moment().seconds(0).valueOf();
   }
 
   __onDispatch(payload: Action<any>): void {
     if (payload.type === Action.user.loaded) {
       const networkId = payload.data.networkId;
-      if (networkId === 1) {
-        Promise.resolve().then(() => {
+      if (networkId === MAINNET_ID) {
+        nextTick(() => {
           Dispatcher.dispatch({
             type: Action.usdOracle.update,
             data: {
@@ -50,12 +50,12 @@ class USDOracleStore extends Store {
             }
           });
         });
-      } else if (networkId === 4) {
-        Promise.resolve().then(() => {
+      } else if (networkId === RINKEBY_ID) {
+        nextTick(() => {
           Dispatcher.dispatch({
             type: Action.usdOracle.update,
             data: {
-              oracleAddress: '0xd15c88e2c2ca6756e4fdb73b75a1d5443f6c096d'
+              oracleAddress: '0x35bda36ab2d658abe60092b5792daad00ab00206'
             }
           });
         });
@@ -70,10 +70,7 @@ class USDOracleStore extends Store {
       const oracleContract = new _web3.eth.Contract(USDOracleABI, payload.data.oracleAddress);
       Promise.all([
         Promisify(oracleContract.methods.price(), 'call'),
-        Promisify(oracleContract.methods.priceNeedsUpdate(), 'call'),
-        Promisify(oracleContract.methods.updateCost(), 'call'),
         Promisify(oracleContract.methods.lastUpdated(), 'call'),
-        Promisify(oracleContract.methods.priceExpirationInterval(), 'call')
       ])
         .then((results: any[]) => {
           Dispatcher.dispatch({
@@ -81,19 +78,14 @@ class USDOracleStore extends Store {
             data: {
               oracleAddress: payload.data.oracleAddress,
               price: results[0],
-              priceNeedsUpdate: results[1],
-              updateCost: results[2],
-              lastUpdated: results[3],
-              priceExpirationInterval: results[4]
+              lastUpdated: results[1]
             }
           });
         });
     } else if (payload.type === Action.usdOracle.beginUpdate) {
-      const _web3 = new Web3(UserStore.web3.currentProvider);
-      const oracleContract = new _web3.eth.Contract(USDOracleABI, this.oracleAddress);
-      Promisify(oracleContract.methods.update(), 'send', {
-        from: UserStore.activeAccount,
-        value: this.updateCost
+      const oracleContract = new UserStore.web3.eth.Contract(USDOracleABI, this.oracleAddress);
+      Promisify(oracleContract.methods.update(0), 'send', {
+        from: UserStore.activeAccount
       })
         .then(() => {
           Dispatcher.dispatch({
