@@ -12,6 +12,9 @@ import _ from 'lodash';
 import USDOracleABI from 'utils/USDOracleABI';
 import moment from 'moment'
 
+const MAINNET_ID = 1;
+const RINKEBY_ID = 4;
+
 class USDOracleStore extends Store {
 
   static abi;
@@ -38,7 +41,7 @@ class USDOracleStore extends Store {
   __onDispatch(payload: Action<any>): void {
     if (payload.type === Action.user.loaded) {
       const networkId = payload.data.networkId;
-      if (networkId === 1) {
+      if (networkId === MAINNET_ID) {
         Promise.resolve().then(() => {
           Dispatcher.dispatch({
             type: Action.usdOracle.update,
@@ -47,7 +50,7 @@ class USDOracleStore extends Store {
             }
           });
         });
-      } else if (networkId === 4) {
+      } else if (networkId === RINKEBY_ID) {
         Promise.resolve().then(() => {
           Dispatcher.dispatch({
             type: Action.usdOracle.update,
