@@ -54,7 +54,7 @@ class USDOracleStore extends Store {
           Dispatcher.dispatch({
             type: Action.usdOracle.update,
             data: {
-              oracleAddress: '0xf01ea14414944c8ea8660526d8d9ec1d04962fca'
+              oracleAddress: '0x96b08790de5019200dbb42c2d245b3128dd2c740'
             }
           });
         });
