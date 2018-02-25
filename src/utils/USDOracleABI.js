@@ -85,20 +85,6 @@ const USDOracleABI = JSON.parse(`[
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [],
-    "name": "priceNeedsUpdate",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "constant": false,
     "inputs": [
       {
@@ -113,17 +99,17 @@ const USDOracleABI = JSON.parse(`[
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [],
-    "name": "getPrice",
-    "outputs": [
+    "constant": false,
+    "inputs": [
       {
-        "name": "",
-        "type": "uint256"
+        "name": "_operator",
+        "type": "address"
       }
     ],
+    "name": "addOperator",
+    "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -157,6 +143,20 @@ const USDOracleABI = JSON.parse(`[
     ],
     "payable": false,
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_operator",
+        "type": "address"
+      }
+    ],
+    "name": "removeOperator",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
