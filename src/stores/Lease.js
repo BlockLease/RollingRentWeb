@@ -17,6 +17,9 @@ import moment from 'moment';
 // Injected web3
 declare var web3: Web3;
 
+const MAINNET_ID = 1;
+const RINKEBY_ID = 4;
+
 class LeaseStore extends Store {
 
   leaseAddress: string;
@@ -37,10 +40,10 @@ class LeaseStore extends Store {
   landlordAddress: string;
 
   sampleContractAddress(): string {
-    if (UserStore.networkId === 1) {
+    if (UserStore.networkId === MAINNET_ID) {
       return '0x762b57e6a4ed578f3d79ce1fbd48da62ae357fe1';
-    } else if (UserStore.networkId === 4) {
-      return '0x9d0B3855F9165Ca37fF82D169c588bEF61835166';
+    } else if (UserStore.networkId === RINKEBY_ID) {
+      return '0x36264deA347EfCEE4AFD1dd105d825e61A9A241D';
     } else {
       throw new Error('Unknown network');
     }

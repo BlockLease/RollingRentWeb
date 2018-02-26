@@ -87,17 +87,15 @@ export default class InactiveLeaseCell extends Component<Props, State> {
             })()}
           </h3>
         </div>
-        <div style={{margin: 8}}>
+        <div style={{margin: 4}}>
           <span style={LeaseStore.landlordSigned ? styles.signed : styles.unsigned}>
             {LeaseStore.landlordSigned ? 'Landlord has signed.' : 'Landlord has not signed.'}
           </span>
-        </div>
-        <div style={{margin: 8}}>
           <span style={LeaseStore.tenantSigned ? styles.signed : styles.unsigned}>
             {LeaseStore.tenantSigned ? 'Tenant has signed.' : 'Tenant has not signed.'}
           </span>
         </div>
-        <div style={{padding: 4}}>
+        <div style={{margin: 4, padding: 4}}>
           <button
             onClick={() => {
               Dispatcher.dispatch({
@@ -122,13 +120,13 @@ const styles = {
   },
   signed: {
     padding: 4,
-    margin: 4,
+    margin: 8,
     color: 'white',
     backgroundColor: 'green'
   },
   unsigned: {
     padding: 4,
-    margin: 4,
+    margin: 8,
     color: 'white',
     backgroundColor: 'red'
   },
